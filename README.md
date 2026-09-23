@@ -4,7 +4,7 @@
 [![Node.js](https://img.shields.io/badge/Node.js-18%2B-green.svg)](https://nodejs.org/)
 [![React](https://img.shields.io/badge/React-18-blue.svg)](https://react.dev/)
 [![Express](https://img.shields.io/badge/Express-4.x-lightgrey.svg)](https://expressjs.com/)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-336791.svg)](https://www.postgresql.org/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Supabase-3ECF8E.svg?logo=supabase&logoColor=white)](https://supabase.com/)
 [![Prisma](https://img.shields.io/badge/Prisma-ORM-2D3748.svg)](https://www.prisma.io/)
 [![Redis](https://img.shields.io/badge/Redis-Upstash-DC382D.svg)](https://upstash.com/)
 [![Socket.io](https://img.shields.io/badge/Socket.io-Realtime-010101.svg)](https://socket.io/)
@@ -104,7 +104,7 @@ flowchart TB
     end
 
     subgraph StorageQueues ["Data, Cache & Job Infrastructure"]
-        Postgres[("PostgreSQL\n(Neon / Supabase)")]
+        Postgres[("PostgreSQL\n(Supabase)")]
         RedisCache[("Redis Cache & Rate Limiting\n(Upstash)")]
         BullMQWorker["Background Worker\n(BullMQ Queues)"]
     end
@@ -242,7 +242,7 @@ backend/src/modules/
 | **Styling** | Tailwind CSS | Utility-first styling for cohesive design systems and responsive layouts. |
 | **Backend** | Node.js + Express | Non-blocking I/O ideal for real-time WebSocket multiplexing and modular monolith architecture. |
 | **ORM** | Prisma ORM | Type-safe query building, declarative migrations, and transactional isolation. |
-| **Database** | PostgreSQL | Enterprise ACID guarantees, row-level locking, and native DECIMAL numeric safety. |
+| **Database** | PostgreSQL (Supabase) | Enterprise ACID guarantees, row-level locking, and native DECIMAL numeric safety hosted on Supabase free tier. |
 | **Cache & Queue** | Redis + BullMQ | In-memory key-value caching, sliding-window rate limiting, and robust job queuing with DLQ support. |
 | **Real-Time** | Socket.io | Bi-directional communication with automated fallback and Redis pub/sub adapter support. |
 | **Authentication** | JWT (Dual Token) + bcrypt | Stateless access tokens with rotating refresh tokens and bcrypt password salting. |
@@ -555,7 +555,7 @@ All endpoints are prefixed with `/api/v1`. Protected routes require an `Authoriz
 ### Prerequisites
 - [Node.js](https://nodejs.org/) (v18.x or higher)
 - [Docker & Docker Compose](https://www.docker.com/) (Optional, for containerized execution)
-- Free-tier accounts for [Neon](https://neon.tech/) or [Supabase](https://supabase.com/) (Postgres), [Upstash](https://upstash.com/) (Redis), and [Chapa](https://chapa.co/)
+- Free-tier accounts for [Supabase](https://supabase.com/) (PostgreSQL), [Upstash](https://upstash.com/) (Redis), and [Chapa](https://chapa.co/)
 
 ### Option A: Docker Compose (Recommended)
 
@@ -614,7 +614,7 @@ npm run dev
 | :--- | :--- | :--- |
 | **Frontend** | [Vercel](https://vercel.com/) | Set root directory to `frontend`, output directory to `dist`. |
 | **Backend API** | [Render](https://render.com/) | Web Service (Node.js runtime). Set environment variables in dashboard. |
-| **Database** | [Neon](https://neon.tech/) / [Supabase](https://supabase.com/) | Managed Serverless PostgreSQL instance with connection pooling. |
+| **Database** | [Supabase](https://supabase.com/) | Managed Serverless PostgreSQL instance with connection pooling. |
 | **Redis & Queues** | [Upstash](https://upstash.com/) | Serverless Redis with standard REST & TLS connection strings. |
 | **Media Hosting** | [Cloudinary](https://cloudinary.com/) | Free media store for store banners and product imagery. |
 | **Payments** | [Chapa Sandbox](https://chapa.co/) | Real test-mode simulation for Ethiopian Birr (ETB) checkouts. |
@@ -631,8 +631,8 @@ PORT=5000
 NODE_ENV=development
 CLIENT_URL=http://localhost:5173
 
-# Database (PostgreSQL)
-DATABASE_URL="postgresql://user:password@localhost:5432/smartdeliver?schema=public"
+# Database (PostgreSQL / Supabase connection pooling URL)
+DATABASE_URL="postgresql://postgres:[YOUR-PASSWORD]@db.[YOUR-PROJECT-REF].supabase.co:5432/postgres?schema=public"
 
 # Redis Cache & Queue
 REDIS_URL="redis://default:token@localhost:6379"
