@@ -768,9 +768,3 @@ smartdeliver/
 - **GitHub Repository:** [https://github.com/biniambeza/SmartDeliver](https://github.com/biniambeza/SmartDeliver)
 
 ---
-
-## License
-
-This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for full details.
-
-Built with ❤️ as a modern, production-grade portfolio showcase.
