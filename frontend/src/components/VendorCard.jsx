@@ -1,5 +1,5 @@
 import React from 'react';
-import { Star, Clock, MapPin, ArrowUpRight, Store } from 'lucide-react';
+import { Star, Clock, MapPin, ArrowUpRight } from 'lucide-react';
 
 export default function VendorCard({ vendor, onSelectVendor }) {
   const {
@@ -12,7 +12,6 @@ export default function VendorCard({ vendor, onSelectVendor }) {
     productsCount,
   } = vendor;
 
-  // Fallback banner placeholder with stylish dark gradient
   const defaultBanner =
     'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80';
   const defaultLogo =
@@ -21,10 +20,10 @@ export default function VendorCard({ vendor, onSelectVendor }) {
   return (
     <div
       onClick={() => onSelectVendor(vendor)}
-      className="group relative bg-slate-900/70 border border-slate-800 hover:border-emerald-500/50 rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl hover:shadow-emerald-500/10 transition-all duration-300 flex flex-col cursor-pointer hover:-translate-y-1"
+      className="group relative bg-white border border-amber-100 hover:border-amber-300 rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col cursor-pointer hover:-translate-y-1.5"
     >
       {/* Banner Image */}
-      <div className="relative h-44 w-full overflow-hidden bg-slate-950">
+      <div className="relative h-44 w-full overflow-hidden bg-slate-100">
         <img
           src={bannerUrl || defaultBanner}
           alt={name}
@@ -33,18 +32,18 @@ export default function VendorCard({ vendor, onSelectVendor }) {
             e.target.src = defaultBanner;
           }}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-black/30"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
 
-        {/* Category Badge */}
+        {/* Category Pill in Sunny Yellow */}
         <div className="absolute top-3 left-3">
-          <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-slate-950/80 backdrop-blur-md text-emerald-400 border border-emerald-500/30">
+          <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-400 text-slate-950 shadow-md shadow-amber-400/30">
             {category}
           </span>
         </div>
 
-        {/* Rating & Delivery Time Pill */}
-        <div className="absolute top-3 right-3 flex items-center space-x-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-950/80 backdrop-blur-md text-slate-200 border border-slate-800">
-          <Clock className="w-3.5 h-3.5 text-emerald-400" />
+        {/* Delivery Time Badge */}
+        <div className="absolute top-3 right-3 flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-bold bg-white/95 backdrop-blur-md text-slate-800 shadow-sm border border-slate-100">
+          <Clock className="w-3.5 h-3.5 text-emerald-600" />
           <span>20-35m</span>
         </div>
       </div>
@@ -55,7 +54,7 @@ export default function VendorCard({ vendor, onSelectVendor }) {
           {/* Logo & Name Header */}
           <div className="flex items-start justify-between gap-3 mb-2">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 rounded-xl overflow-hidden bg-slate-800 border border-slate-700 shrink-0">
+              <div className="w-11 h-11 rounded-2xl overflow-hidden bg-amber-50 border border-amber-200 shrink-0 shadow-inner">
                 <img
                   src={logoUrl || defaultLogo}
                   alt={name}
@@ -66,38 +65,38 @@ export default function VendorCard({ vendor, onSelectVendor }) {
                 />
               </div>
               <div>
-                <h3 className="text-lg font-bold text-white group-hover:text-emerald-400 transition-colors line-clamp-1">
+                <h3 className="text-base font-black text-slate-900 group-hover:text-amber-600 transition-colors line-clamp-1">
                   {name}
                 </h3>
                 {address && (
-                  <p className="flex items-center text-xs text-slate-400 mt-0.5 line-clamp-1">
-                    <MapPin className="w-3 h-3 mr-1 text-slate-500 shrink-0" />
+                  <p className="flex items-center text-xs text-slate-500 mt-0.5 line-clamp-1">
+                    <MapPin className="w-3 h-3 mr-1 text-slate-400 shrink-0" />
                     <span>{address}</span>
                   </p>
                 )}
               </div>
             </div>
 
-            <div className="p-2 rounded-xl bg-slate-800/80 group-hover:bg-emerald-500 group-hover:text-slate-950 text-slate-400 transition-all shrink-0">
+            <div className="w-8 h-8 rounded-full bg-amber-100 group-hover:bg-[#0A3E33] group-hover:text-white text-slate-800 flex items-center justify-center transition-all shrink-0">
               <ArrowUpRight className="w-4 h-4" />
             </div>
           </div>
 
           {/* Description */}
           {description && (
-            <p className="text-xs text-slate-400 line-clamp-2 mt-2 leading-relaxed">
+            <p className="text-xs text-slate-600 line-clamp-2 mt-2 leading-relaxed">
               {description}
             </p>
           )}
         </div>
 
         {/* Footer info: items count & status */}
-        <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs">
-          <span className="text-slate-400 font-medium">
-            {productsCount !== undefined ? `${productsCount} items` : 'Browse menu'}
+        <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
+          <span className="text-slate-500 font-semibold">
+            {productsCount !== undefined ? `${productsCount} catalog items` : 'Browse menu'}
           </span>
-          <span className="flex items-center text-emerald-400 font-semibold">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 inline-block mr-1.5 animate-pulse"></span>
+          <span className="flex items-center text-emerald-700 font-extrabold">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block mr-1.5 animate-pulse"></span>
             Open Now
           </span>
         </div>

@@ -1,1 +1,20 @@
 @import "tailwindcss";
+
+@layer base {
+  body {
+    @apply bg-[#FDFBF7] text-slate-900 antialiased selection:bg-amber-400 selection:text-slate-950 font-sans;
+  }
+}
+
+/* Custom soft shadows and warm glow effects */
+.shadow-soft {
+  box-shadow: 0 4px 20px -2px rgba(245, 158, 11, 0.08), 0 2px 6px -1px rgba(0, 0, 0, 0.04);
+}
+
+.shadow-card {
+  box-shadow: 0 10px 30px -4px rgba(15, 23, 42, 0.05), 0 4px 10px -2px rgba(15, 23, 42, 0.02);
+}
+
+.shadow-card-hover {
+  box-shadow: 0 20px 40px -8px rgba(245, 158, 11, 0.15), 0 8px 16px -4px rgba(5, 150, 105, 0.08);
+}
