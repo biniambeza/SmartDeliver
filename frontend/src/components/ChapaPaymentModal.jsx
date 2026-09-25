@@ -59,15 +59,15 @@ export default function ChapaPaymentModal({ order, onClose, onPaymentSuccess }) 
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/50 backdrop-blur-xs animate-in fade-in duration-200">
       <div 
-        className="relative w-full max-w-lg bg-[#FDFBF7] border border-amber-100 rounded-3xl shadow-2xl overflow-hidden p-6 sm:p-8"
+        className="relative w-full max-w-lg bg-white border border-gray-100 rounded-3xl shadow-2xl overflow-hidden p-6 sm:p-8 animate-fade-in-up"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-5 right-5 p-2 rounded-xl text-slate-400 hover:text-slate-800 hover:bg-amber-50 transition-colors cursor-pointer"
+          className="absolute top-5 right-5 p-2 rounded-xl text-gray-400 hover:text-gray-800 hover:bg-gray-50 transition-colors cursor-pointer"
         >
           <X className="w-5 h-5" />
         </button>
@@ -75,39 +75,39 @@ export default function ChapaPaymentModal({ order, onClose, onPaymentSuccess }) 
         {isSuccess ? (
           /* Payment Success View */
           <div className="text-center py-4">
-            <div className="w-16 h-16 rounded-3xl bg-emerald-100 border border-emerald-300 flex items-center justify-center text-emerald-600 mx-auto mb-4 shadow-md shadow-emerald-500/10 animate-bounce">
+            <div className="w-16 h-16 rounded-3xl bg-[#E8F5E9] border border-[#1E8C45]/20 flex items-center justify-center text-[#1E8C45] mx-auto mb-4 shadow-md shadow-[#1E8C45]/10 animate-bounce">
               <CheckCircle2 className="w-8 h-8" />
             </div>
-            <span className="px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold uppercase tracking-wider mb-2 border border-emerald-300 inline-block">
+            <span className="px-3 py-1 rounded-full bg-[#E8F5E9] text-[#1E8C45] text-xs font-bold uppercase tracking-wider mb-2 border border-[#1E8C45]/20 inline-block">
               Payment Secured in Escrow
             </span>
-            <h2 className="text-2xl font-black text-slate-900 tracking-tight mt-1">
+            <h2 className="text-2xl font-black text-gray-900 tracking-tight mt-1">
               Payment Confirmed!
             </h2>
-            <p className="text-xs text-slate-600 mt-2 max-w-sm mx-auto leading-relaxed">
-              Your payment of <strong className="text-emerald-700 font-bold">{Number(order.totalAmount).toLocaleString()} ETB</strong> has been verified and deposited into the Delivero escrow vault.
+            <p className="text-xs text-gray-600 mt-2 max-w-sm mx-auto leading-relaxed">
+              Your payment of <strong className="text-[#1E8C45] font-bold">{Number(order.totalAmount).toLocaleString()} ETB</strong> has been verified and deposited into the SmartDeliver escrow vault.
             </p>
 
-            <div className="mt-6 p-4 rounded-2xl bg-white border border-amber-100 text-left space-y-2 text-xs shadow-xs">
+            <div className="mt-6 p-4 rounded-2xl bg-gray-50 border border-gray-100 text-left space-y-2 text-xs shadow-xs">
               <div className="flex justify-between">
-                <span className="text-slate-500">Order ID:</span>
-                <span className="text-slate-900 font-mono font-semibold">{order.id.slice(0, 8).toUpperCase()}</span>
+                <span className="text-gray-500">Order ID:</span>
+                <span className="text-gray-900 font-mono font-semibold">{order.id.slice(0, 8).toUpperCase()}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500">Transaction Ref:</span>
-                <span className="text-emerald-700 font-mono text-[11px] font-semibold truncate max-w-[200px]">
+                <span className="text-gray-500">Transaction Ref:</span>
+                <span className="text-[#1E8C45] font-mono text-[11px] font-semibold truncate max-w-[200px]">
                   {paymentData?.txRef}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500">Payment Status:</span>
-                <span className="text-emerald-700 font-bold">PAID (ESCROW HELD)</span>
+                <span className="text-gray-500">Payment Status:</span>
+                <span className="text-[#1E8C45] font-bold">PAID (ESCROW HELD)</span>
               </div>
             </div>
 
             <button
               onClick={onClose}
-              className="mt-6 w-full py-3.5 px-4 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-sm shadow-md shadow-amber-400/25 transition-all cursor-pointer"
+              className="mt-6 w-full py-3.5 px-4 rounded-xl bg-[#F5B820] hover:bg-[#E5A910] text-white font-bold text-sm shadow-md shadow-[#F5B820]/25 transition-all cursor-pointer"
             >
               Done & Return to Orders
             </button>
@@ -117,53 +117,53 @@ export default function ChapaPaymentModal({ order, onClose, onPaymentSuccess }) 
           <div>
             {/* Header */}
             <div className="text-center mb-6">
-              <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-amber-100 border border-amber-300 text-amber-900 text-xs font-semibold mb-3">
-                <Lock className="w-3.5 h-3.5 text-amber-700" />
+              <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-[#FFF8E1] border border-[#F5B820]/30 text-[#E5A910] text-xs font-semibold mb-3">
+                <Lock className="w-3.5 h-3.5 text-[#F5B820]" />
                 <span>Chapa Escrow Checkout</span>
               </div>
-              <h2 className="text-2xl font-black text-slate-900 tracking-tight">
+              <h2 className="text-2xl font-black text-gray-900 tracking-tight">
                 Complete Your Payment
               </h2>
-              <p className="text-xs text-slate-500 mt-1">
-                Order #{order.id.slice(0, 8).toUpperCase()} • {order.vendor?.name || 'Delivero Order'}
+              <p className="text-xs text-gray-500 mt-1">
+                Order #{order.id.slice(0, 8).toUpperCase()} • {order.vendor?.name || 'SmartDeliver Order'}
               </p>
             </div>
 
             {error && (
-              <div className="mb-4 p-3 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-700 flex items-center space-x-2">
-                <AlertCircle className="w-4 h-4 shrink-0 text-rose-500" />
+              <div className="mb-4 p-3 rounded-xl bg-red-50 border border-red-200 text-xs text-red-700 flex items-center space-x-2">
+                <AlertCircle className="w-4 h-4 shrink-0 text-red-500" />
                 <span>{error}</span>
               </div>
             )}
 
             {/* Total Amount Banner */}
-            <div className="p-4 rounded-2xl bg-white border border-amber-100 shadow-xs flex items-center justify-between mb-5">
+            <div className="p-4 rounded-2xl bg-gray-50 border border-gray-100 shadow-xs flex items-center justify-between mb-5">
               <div>
-                <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+                <span className="text-[11px] font-semibold uppercase tracking-wider text-gray-500">
                   Total Payable
                 </span>
-                <div className="text-2xl font-black text-slate-900 mt-0.5">
-                  {Number(order.totalAmount).toLocaleString()} <span className="text-sm font-bold text-emerald-700">ETB</span>
+                <div className="text-2xl font-black text-gray-900 mt-0.5">
+                  {Number(order.totalAmount).toLocaleString()} <span className="text-sm font-bold text-[#1E8C45]">ETB</span>
                 </div>
               </div>
               <div className="flex -space-x-1.5 overflow-hidden">
-                <span className="px-2.5 py-1 bg-amber-50 text-amber-800 border border-amber-200 rounded-lg text-[10px] font-bold">
+                <span className="px-2.5 py-1 bg-[#FFF8E1] text-[#E5A910] border border-[#F5B820]/30 rounded-lg text-[10px] font-bold">
                   Telebirr
                 </span>
-                <span className="px-2.5 py-1 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-lg text-[10px] font-bold">
+                <span className="px-2.5 py-1 bg-[#E8F5E9] text-[#1E8C45] border border-[#1E8C45]/20 rounded-lg text-[10px] font-bold">
                   CBE Birr
                 </span>
-                <span className="px-2.5 py-1 bg-white text-slate-700 border border-slate-200 rounded-lg text-[10px] font-bold shadow-xs">
+                <span className="px-2.5 py-1 bg-white text-gray-700 border border-gray-200 rounded-lg text-[10px] font-bold shadow-xs">
                   Cards
                 </span>
               </div>
             </div>
 
             {/* Escrow Guarantee Box */}
-            <div className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200/80 flex items-start space-x-3 mb-6">
-              <ShieldCheck className="w-5 h-5 text-emerald-700 shrink-0 mt-0.5" />
-              <p className="text-xs text-slate-700 leading-relaxed">
-                <strong className="text-emerald-800 font-bold">100% Escrow Protection:</strong> Funds remain securely held by Delivero until the courier delivers your items and you confirm receipt.
+            <div className="p-3.5 rounded-2xl bg-[#E8F5E9] border border-[#1E8C45]/15 flex items-start space-x-3 mb-6">
+              <ShieldCheck className="w-5 h-5 text-[#1E8C45] shrink-0 mt-0.5" />
+              <p className="text-xs text-gray-700 leading-relaxed">
+                <strong className="text-[#1E8C45] font-bold">100% Escrow Protection:</strong> Funds remain securely held by SmartDeliver until the courier delivers your items and you confirm receipt.
               </p>
             </div>
 
@@ -173,11 +173,11 @@ export default function ChapaPaymentModal({ order, onClose, onPaymentSuccess }) 
                 <button
                   onClick={handleInitializePayment}
                   disabled={loading}
-                  className="w-full py-3.5 px-4 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-sm shadow-md shadow-amber-400/25 active:scale-[0.99] transition-all flex items-center justify-center space-x-2 cursor-pointer disabled:opacity-50"
+                  className="w-full py-3.5 px-4 rounded-xl bg-[#F5B820] hover:bg-[#E5A910] text-white font-bold text-sm shadow-md shadow-[#F5B820]/25 active:scale-[0.99] transition-all flex items-center justify-center space-x-2 cursor-pointer disabled:opacity-50"
                 >
                   {loading ? (
                     <>
-                      <Loader2 className="w-4 h-4 animate-spin text-slate-950" />
+                      <Loader2 className="w-4 h-4 animate-spin text-white" />
                       <span>Generating Chapa Transaction...</span>
                     </>
                   ) : (
@@ -196,7 +196,7 @@ export default function ChapaPaymentModal({ order, onClose, onPaymentSuccess }) 
                       href={paymentData.checkoutUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-full py-3 px-4 rounded-xl bg-[#0A3E33] hover:bg-[#072d25] text-white font-bold text-sm shadow-md transition-all flex items-center justify-center space-x-2 cursor-pointer"
+                      className="w-full py-3 px-4 rounded-xl bg-[#1E8C45] hover:bg-[#166B35] text-white font-bold text-sm shadow-md transition-all flex items-center justify-center space-x-2 cursor-pointer"
                     >
                       <ExternalLink className="w-4 h-4" />
                       <span>Open Live Chapa Portal</span>
@@ -207,16 +207,16 @@ export default function ChapaPaymentModal({ order, onClose, onPaymentSuccess }) 
                   <button
                     onClick={handleSimulatePayment}
                     disabled={loading}
-                    className="w-full py-3 px-4 rounded-xl bg-white hover:bg-slate-50 text-slate-800 font-semibold text-xs border border-slate-200 transition-all flex items-center justify-center space-x-2 cursor-pointer disabled:opacity-50 shadow-xs"
+                    className="w-full py-3 px-4 rounded-xl bg-white hover:bg-gray-50 text-gray-800 font-semibold text-xs border border-gray-200 transition-all flex items-center justify-center space-x-2 cursor-pointer disabled:opacity-50 shadow-xs"
                   >
                     {loading ? (
                       <>
-                        <Loader2 className="w-3.5 h-3.5 animate-spin text-slate-800" />
+                        <Loader2 className="w-3.5 h-3.5 animate-spin text-gray-800" />
                         <span>Verifying Sandbox Payment...</span>
                       </>
                     ) : (
                       <>
-                        <Smartphone className="w-3.5 h-3.5 text-emerald-600" />
+                        <Smartphone className="w-3.5 h-3.5 text-[#1E8C45]" />
                         <span>Simulate Instant Telebirr Success (Test Mode)</span>
                       </>
                     )}
@@ -226,7 +226,7 @@ export default function ChapaPaymentModal({ order, onClose, onPaymentSuccess }) 
 
               <button
                 onClick={onClose}
-                className="w-full py-2.5 px-4 rounded-xl text-slate-500 hover:text-slate-800 font-medium text-xs transition-colors cursor-pointer"
+                className="w-full py-2.5 px-4 rounded-xl text-gray-500 hover:text-gray-800 font-medium text-xs transition-colors cursor-pointer"
               >
                 Pay Later
               </button>

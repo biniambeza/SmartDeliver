@@ -8,10 +8,10 @@ export default function ProductCard({ product, onAddToCart, isAdded }) {
     'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=400&q=80';
 
   return (
-    <div className="bg-white border border-amber-100 hover:border-amber-300 rounded-3xl overflow-hidden p-4 flex flex-col justify-between transition-all duration-200 group shadow-sm hover:shadow-md">
+    <div className="bg-white border border-gray-100 hover:border-[#F5B820]/40 rounded-3xl overflow-hidden p-4 flex flex-col justify-between transition-all duration-200 group shadow-sm hover:shadow-md">
       <div className="flex gap-4">
         {/* Product Image */}
-        <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden bg-amber-50 shrink-0 relative border border-amber-100/60">
+        <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden bg-[#FFF8E1] shrink-0 relative border border-[#F5B820]/10">
           <img
             src={imageUrl || defaultProductImg}
             alt={name}
@@ -22,7 +22,7 @@ export default function ProductCard({ product, onAddToCart, isAdded }) {
           />
           {!isAvailable && (
             <div className="absolute inset-0 bg-white/80 backdrop-blur-xs flex items-center justify-center">
-              <span className="text-[10px] font-black text-rose-700 uppercase tracking-wider px-2 py-0.5 rounded-full bg-rose-50 border border-rose-200">
+              <span className="text-[10px] font-black text-red-700 uppercase tracking-wider px-2 py-0.5 rounded-full bg-red-50 border border-red-200">
                 Sold Out
               </span>
             </div>
@@ -33,26 +33,26 @@ export default function ProductCard({ product, onAddToCart, isAdded }) {
         <div className="flex-1 flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between gap-2">
-              <h4 className="text-sm sm:text-base font-extrabold text-slate-900 group-hover:text-amber-600 transition-colors line-clamp-1">
+              <h4 className="text-sm sm:text-base font-extrabold text-gray-900 group-hover:text-[#1E8C45] transition-colors line-clamp-1">
                 {name}
               </h4>
               {category && (
-                <span className="text-[9px] font-bold uppercase px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200">
+                <span className="text-[9px] font-bold uppercase px-2 py-0.5 rounded-full bg-[#FFF8E1] text-[#E5A910] border border-[#F5B820]/20">
                   {category}
                 </span>
               )}
             </div>
 
             {description && (
-              <p className="text-xs text-slate-500 mt-1 line-clamp-2 leading-relaxed">
+              <p className="text-xs text-gray-500 mt-1 line-clamp-2 leading-relaxed">
                 {description}
               </p>
             )}
           </div>
 
           <div className="mt-3 flex items-center justify-between">
-            <span className="text-base font-black text-slate-900">
-              {Number(price).toLocaleString()} <span className="text-xs font-bold text-emerald-700">ETB</span>
+            <span className="text-base font-black text-gray-900">
+              {Number(price).toLocaleString()} <span className="text-xs font-bold text-[#1E8C45]">ETB</span>
             </span>
 
             <button
@@ -60,10 +60,10 @@ export default function ProductCard({ product, onAddToCart, isAdded }) {
               disabled={!isAvailable}
               className={`px-3.5 py-1.5 rounded-full transition-all cursor-pointer flex items-center space-x-1 ${
                 !isAvailable
-                  ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
+                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                   : isAdded
-                  ? 'bg-[#0A3E33] text-white font-bold shadow-sm'
-                  : 'bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold shadow-md shadow-amber-400/20'
+                  ? 'bg-[#1E8C45] text-white font-bold shadow-sm'
+                  : 'bg-[#F5B820] hover:bg-[#E5A910] text-white font-bold shadow-md shadow-[#F5B820]/20'
               }`}
             >
               {isAdded ? (

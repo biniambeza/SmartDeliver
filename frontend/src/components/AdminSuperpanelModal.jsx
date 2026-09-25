@@ -19,7 +19,7 @@ import {
 import api from '../lib/api';
 
 export default function AdminSuperpanelModal({ isOpen, onClose }) {
-  const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'users' | 'audit'
+  const [activeTab, setActiveTab] = useState('overview');
   const [metrics, setMetrics] = useState(null);
   const [users, setUsers] = useState([]);
   const [auditLogs, setAuditLogs] = useState({ authLogs: [], adminLogs: [] });
@@ -78,25 +78,25 @@ export default function AdminSuperpanelModal({ isOpen, onClose }) {
   });
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/40 backdrop-blur-xs animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-gray-900/40 backdrop-blur-xs animate-in fade-in duration-200">
       <div 
-        className="relative w-full max-w-5xl bg-[#FDFBF7] border border-amber-100 rounded-3xl shadow-2xl overflow-hidden flex flex-col h-[700px] max-h-[92vh]"
+        className="relative w-full max-w-5xl bg-white border border-gray-100 rounded-3xl shadow-2xl overflow-hidden flex flex-col h-[700px] max-h-[92vh] animate-fade-in-up"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="p-5 border-b border-amber-100 bg-white flex items-center justify-between">
+        <div className="p-5 border-b border-gray-100 bg-white flex items-center justify-between">
           <div className="flex items-center space-x-3.5">
-            <div className="w-11 h-11 rounded-2xl bg-amber-400/20 border border-amber-300 flex items-center justify-center text-amber-700">
+            <div className="w-11 h-11 rounded-2xl bg-[#1E8C45] flex items-center justify-center text-white shadow-md shadow-[#1E8C45]/20">
               <ShieldCheck className="w-6 h-6" />
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <h3 className="text-base font-bold text-slate-900">Platform Superpanel</h3>
-                <span className="px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300 text-[10px] font-black">
+                <h3 className="text-base font-bold text-gray-900">Platform Superpanel</h3>
+                <span className="px-2 py-0.5 rounded-full bg-[#FFF8E1] text-[#E5A910] border border-[#F5B820]/30 text-[10px] font-black">
                   SUPER ADMIN
                 </span>
               </div>
-              <p className="text-xs text-slate-500 mt-0.5">
+              <p className="text-xs text-gray-500 mt-0.5">
                 Multi-Vendor Oversight & Compliance Ledger
               </p>
             </div>
@@ -106,13 +106,13 @@ export default function AdminSuperpanelModal({ isOpen, onClose }) {
             <button
               onClick={fetchAdminData}
               disabled={loading}
-              className="p-2 rounded-xl bg-slate-100 hover:bg-amber-50 text-slate-600 hover:text-slate-900 transition-all cursor-pointer"
+              className="p-2 rounded-xl bg-gray-50 hover:bg-[#FFF8E1] text-gray-600 hover:text-gray-900 transition-all cursor-pointer"
             >
               <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
             </button>
             <button
               onClick={onClose}
-              className="p-2 rounded-xl text-slate-400 hover:text-slate-800 hover:bg-amber-50 transition-colors cursor-pointer"
+              className="p-2 rounded-xl text-gray-400 hover:text-gray-800 hover:bg-gray-50 transition-colors cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
@@ -120,13 +120,13 @@ export default function AdminSuperpanelModal({ isOpen, onClose }) {
         </div>
 
         {/* Tab Navigation */}
-        <div className="px-6 py-2.5 bg-[#FAF7EE] border-b border-amber-100 flex items-center space-x-2">
+        <div className="px-6 py-2.5 bg-gray-50 border-b border-gray-100 flex items-center space-x-2">
           <button
             onClick={() => setActiveTab('overview')}
             className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
               activeTab === 'overview'
-                ? 'bg-amber-400 text-slate-950 shadow-xs'
-                : 'text-slate-600 hover:text-slate-950 hover:bg-white'
+                ? 'bg-[#F5B820] text-white shadow-xs'
+                : 'text-gray-600 hover:text-gray-950 hover:bg-white'
             }`}
           >
             Mission Control
@@ -135,8 +135,8 @@ export default function AdminSuperpanelModal({ isOpen, onClose }) {
             onClick={() => setActiveTab('users')}
             className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
               activeTab === 'users'
-                ? 'bg-amber-400 text-slate-950 shadow-xs'
-                : 'text-slate-600 hover:text-slate-950 hover:bg-white'
+                ? 'bg-[#F5B820] text-white shadow-xs'
+                : 'text-gray-600 hover:text-gray-950 hover:bg-white'
             }`}
           >
             User Accounts ({users.length})
@@ -145,8 +145,8 @@ export default function AdminSuperpanelModal({ isOpen, onClose }) {
             onClick={() => setActiveTab('audit')}
             className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
               activeTab === 'audit'
-                ? 'bg-amber-400 text-slate-950 shadow-xs'
-                : 'text-slate-600 hover:text-slate-950 hover:bg-white'
+                ? 'bg-[#F5B820] text-white shadow-xs'
+                : 'text-gray-600 hover:text-gray-950 hover:bg-white'
             }`}
           >
             Security Audit Trail
@@ -156,8 +156,8 @@ export default function AdminSuperpanelModal({ isOpen, onClose }) {
         {/* Modal Content */}
         <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-6">
           {loading ? (
-            <div className="py-24 text-center text-slate-500 flex flex-col items-center justify-center">
-              <Loader2 className="w-8 h-8 text-amber-500 animate-spin mb-3" />
+            <div className="py-24 text-center text-gray-500 flex flex-col items-center justify-center">
+              <Loader2 className="w-8 h-8 text-[#F5B820] animate-spin mb-3" />
               <p className="text-xs font-semibold">Aggregating platform metrics and audit logs...</p>
             </div>
           ) : (
@@ -167,71 +167,71 @@ export default function AdminSuperpanelModal({ isOpen, onClose }) {
                 <div className="space-y-6">
                   {/* Top Metric Cards */}
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                    <div className="p-4 rounded-2xl bg-white border border-amber-100 shadow-xs">
-                      <span className="text-[11px] text-slate-500 font-semibold block">Gross Platform Sales</span>
-                      <span className="text-xl font-black text-emerald-700 mt-1 block">
+                    <div className="p-4 rounded-2xl bg-white border border-gray-100 shadow-xs">
+                      <span className="text-[11px] text-gray-500 font-semibold block">Gross Platform Sales</span>
+                      <span className="text-xl font-black text-[#1E8C45] mt-1 block">
                         ETB {metrics.totalGrossRevenue.toLocaleString()}
                       </span>
                     </div>
 
-                    <div className="p-4 rounded-2xl bg-white border border-amber-100 shadow-xs">
-                      <span className="text-[11px] text-slate-500 font-semibold block">Escrow In Transit</span>
-                      <span className="text-xl font-black text-amber-600 mt-1 block">
+                    <div className="p-4 rounded-2xl bg-white border border-gray-100 shadow-xs">
+                      <span className="text-[11px] text-gray-500 font-semibold block">Escrow In Transit</span>
+                      <span className="text-xl font-black text-[#F5B820] mt-1 block">
                         ETB {metrics.totalEscrowHeld.toLocaleString()}
                       </span>
                     </div>
 
-                    <div className="p-4 rounded-2xl bg-white border border-amber-100 shadow-xs">
-                      <span className="text-[11px] text-slate-500 font-semibold block">Total Orders</span>
-                      <span className="text-xl font-black text-slate-900 mt-1 block">
+                    <div className="p-4 rounded-2xl bg-white border border-gray-100 shadow-xs">
+                      <span className="text-[11px] text-gray-500 font-semibold block">Total Orders</span>
+                      <span className="text-xl font-black text-gray-900 mt-1 block">
                         {metrics.totalOrders}
                       </span>
                     </div>
 
-                    <div className="p-4 rounded-2xl bg-white border border-amber-100 shadow-xs">
-                      <span className="text-[11px] text-slate-500 font-semibold block">Active Couriers</span>
-                      <span className="text-xl font-black text-[#0A3E33] mt-1 block">
+                    <div className="p-4 rounded-2xl bg-white border border-gray-100 shadow-xs">
+                      <span className="text-[11px] text-gray-500 font-semibold block">Active Couriers</span>
+                      <span className="text-xl font-black text-[#1E8C45] mt-1 block">
                         {metrics.activeDeliveriesCount}
                       </span>
                     </div>
                   </div>
 
                   {/* Role Distribution Grid */}
-                  <div className="p-5 rounded-2xl bg-white border border-amber-100 shadow-xs space-y-4">
-                    <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+                  <div className="p-5 rounded-2xl bg-white border border-gray-100 shadow-xs space-y-4">
+                    <h4 className="text-xs font-bold text-gray-700 uppercase tracking-wider">
                       User Ecosystem Distribution
                     </h4>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                      <div className="p-3.5 rounded-xl bg-[#FAF7EE] border border-amber-100/80 flex items-center justify-between">
+                      <div className="p-3.5 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-between">
                         <div>
-                          <p className="text-[11px] text-slate-500">Customers</p>
-                          <p className="text-lg font-bold text-slate-900">{metrics.roleBreakdown.CUSTOMER}</p>
+                          <p className="text-[11px] text-gray-500">Customers</p>
+                          <p className="text-lg font-bold text-gray-900">{metrics.roleBreakdown.CUSTOMER}</p>
                         </div>
-                        <Users className="w-5 h-5 text-amber-600" />
+                        <Users className="w-5 h-5 text-[#F5B820]" />
                       </div>
 
-                      <div className="p-3.5 rounded-xl bg-[#FAF7EE] border border-amber-100/80 flex items-center justify-between">
+                      <div className="p-3.5 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-between">
                         <div>
-                          <p className="text-[11px] text-slate-500">Merchants</p>
-                          <p className="text-lg font-bold text-slate-900">{metrics.roleBreakdown.VENDOR}</p>
+                          <p className="text-[11px] text-gray-500">Merchants</p>
+                          <p className="text-lg font-bold text-gray-900">{metrics.roleBreakdown.VENDOR}</p>
                         </div>
-                        <Store className="w-5 h-5 text-emerald-700" />
+                        <Store className="w-5 h-5 text-[#1E8C45]" />
                       </div>
 
-                      <div className="p-3.5 rounded-xl bg-[#FAF7EE] border border-amber-100/80 flex items-center justify-between">
+                      <div className="p-3.5 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-between">
                         <div>
-                          <p className="text-[11px] text-slate-500">Couriers</p>
-                          <p className="text-lg font-bold text-slate-900">{metrics.roleBreakdown.RIDER}</p>
+                          <p className="text-[11px] text-gray-500">Couriers</p>
+                          <p className="text-lg font-bold text-gray-900">{metrics.roleBreakdown.RIDER}</p>
                         </div>
-                        <Bike className="w-5 h-5 text-amber-600" />
+                        <Bike className="w-5 h-5 text-[#F5B820]" />
                       </div>
 
-                      <div className="p-3.5 rounded-xl bg-[#FAF7EE] border border-amber-100/80 flex items-center justify-between">
+                      <div className="p-3.5 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-between">
                         <div>
-                          <p className="text-[11px] text-slate-500">Admins</p>
-                          <p className="text-lg font-bold text-slate-900">{metrics.roleBreakdown.ADMIN}</p>
+                          <p className="text-[11px] text-gray-500">Admins</p>
+                          <p className="text-lg font-bold text-gray-900">{metrics.roleBreakdown.ADMIN}</p>
                         </div>
-                        <ShieldCheck className="w-5 h-5 text-emerald-700" />
+                        <ShieldCheck className="w-5 h-5 text-[#1E8C45]" />
                       </div>
                     </div>
                   </div>
@@ -244,13 +244,13 @@ export default function AdminSuperpanelModal({ isOpen, onClose }) {
                   {/* Filters */}
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <div className="relative flex-1 min-w-[200px] max-w-sm">
-                      <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                      <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
                       <input
                         type="text"
                         value={userSearch}
                         onChange={(e) => setUserSearch(e.target.value)}
                         placeholder="Search by name or email..."
-                        className="w-full pl-9 pr-4 py-2 rounded-xl bg-white border border-amber-200/80 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20"
+                        className="w-full pl-9 pr-4 py-2 rounded-xl bg-white border border-gray-200 text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:border-[#F5B820] focus:ring-2 focus:ring-[#F5B820]/20"
                       />
                     </div>
 
@@ -261,8 +261,8 @@ export default function AdminSuperpanelModal({ isOpen, onClose }) {
                           onClick={() => setRoleFilter(r)}
                           className={`px-3 py-1.5 rounded-xl font-bold transition-all cursor-pointer ${
                             roleFilter === r
-                              ? 'bg-amber-400 text-slate-950 shadow-xs'
-                              : 'bg-white text-slate-600 border border-slate-200 hover:text-slate-950'
+                              ? 'bg-[#F5B820] text-white shadow-xs'
+                              : 'bg-white text-gray-600 border border-gray-200 hover:text-gray-950'
                           }`}
                         >
                           {r}
@@ -272,9 +272,9 @@ export default function AdminSuperpanelModal({ isOpen, onClose }) {
                   </div>
 
                   {/* Users Table */}
-                  <div className="rounded-2xl border border-amber-100 bg-white shadow-xs overflow-hidden">
+                  <div className="rounded-2xl border border-gray-100 bg-white shadow-xs overflow-hidden">
                     <table className="w-full text-left text-xs">
-                      <thead className="bg-[#FAF7EE] border-b border-amber-100 text-slate-600 uppercase text-[10px]">
+                      <thead className="bg-gray-50 border-b border-gray-100 text-gray-600 uppercase text-[10px]">
                         <tr>
                           <th className="p-3.5 font-bold">User</th>
                           <th className="p-3.5 font-bold">Role</th>
@@ -283,23 +283,23 @@ export default function AdminSuperpanelModal({ isOpen, onClose }) {
                           <th className="p-3.5 font-bold text-right">Action</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-slate-100">
+                      <tbody className="divide-y divide-gray-100">
                         {filteredUsers.map((u) => (
-                          <tr key={u.id} className="hover:bg-amber-50/40 transition-colors">
+                          <tr key={u.id} className="hover:bg-[#FFF8E1]/30 transition-colors">
                             <td className="p-3.5">
-                              <p className="font-bold text-slate-900">{u.name}</p>
-                              <p className="text-[11px] text-slate-400">{u.email}</p>
+                              <p className="font-bold text-gray-900">{u.name}</p>
+                              <p className="text-[11px] text-gray-400">{u.email}</p>
                             </td>
                             <td className="p-3.5">
                               <span
                                 className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${
                                   u.role === 'ADMIN'
-                                    ? 'bg-amber-100 text-amber-900 border-amber-300'
+                                    ? 'bg-[#FFF8E1] text-[#E5A910] border-[#F5B820]/30'
                                     : u.role === 'VENDOR'
-                                    ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                                    ? 'bg-[#E8F5E9] text-[#1E8C45] border-[#1E8C45]/20'
                                     : u.role === 'RIDER'
-                                    ? 'bg-[#0A3E33]/10 text-[#0A3E33] border-[#0A3E33]/30'
-                                    : 'bg-slate-100 text-slate-700 border-slate-200'
+                                    ? 'bg-[#1E8C45]/10 text-[#1E8C45] border-[#1E8C45]/30'
+                                    : 'bg-gray-100 text-gray-700 border-gray-200'
                                 }`}
                               >
                                 {u.role}
@@ -307,16 +307,16 @@ export default function AdminSuperpanelModal({ isOpen, onClose }) {
                             </td>
                             <td className="p-3.5">
                               {u.isActive ? (
-                                <span className="inline-flex items-center text-[10px] text-emerald-700 font-bold">
-                                  <CheckCircle2 className="w-3 h-3 mr-1 text-emerald-600" /> Active
+                                <span className="inline-flex items-center text-[10px] text-[#1E8C45] font-bold">
+                                  <CheckCircle2 className="w-3 h-3 mr-1 text-[#1E8C45]" /> Active
                                 </span>
                               ) : (
-                                <span className="inline-flex items-center text-[10px] text-rose-600 font-bold">
-                                  <XCircle className="w-3 h-3 mr-1 text-rose-500" /> Suspended
+                                <span className="inline-flex items-center text-[10px] text-red-600 font-bold">
+                                  <XCircle className="w-3 h-3 mr-1 text-red-500" /> Suspended
                                 </span>
                               )}
                             </td>
-                            <td className="p-3.5 text-slate-600">
+                            <td className="p-3.5 text-gray-600">
                               {u.role === 'CUSTOMER' && `${u._count.customerOrders} orders`}
                               {u.role === 'VENDOR' && (u.vendor?.name || 'Store Owner')}
                               {u.role === 'RIDER' && `${u._count.assignedDeliveries} deliveries`}
@@ -328,8 +328,8 @@ export default function AdminSuperpanelModal({ isOpen, onClose }) {
                                 disabled={actionLoading}
                                 className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all cursor-pointer ${
                                   u.isActive
-                                    ? 'bg-rose-50 hover:bg-rose-500 text-rose-700 hover:text-white border border-rose-200'
-                                    : 'bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white border border-emerald-200'
+                                    ? 'bg-red-50 hover:bg-red-500 text-red-700 hover:text-white border border-red-200'
+                                    : 'bg-[#E8F5E9] hover:bg-[#1E8C45] text-[#1E8C45] hover:text-white border border-[#1E8C45]/20'
                                 }`}
                               >
                                 {u.isActive ? 'Suspend' : 'Activate'}
@@ -346,30 +346,30 @@ export default function AdminSuperpanelModal({ isOpen, onClose }) {
               {/* TAB 3: AUDIT TRAIL */}
               {activeTab === 'audit' && (
                 <div className="space-y-4">
-                  <span className="text-xs text-slate-500 block mb-2">
+                  <span className="text-xs text-gray-500 block mb-2">
                     Immutable security and administrative transaction log:
                   </span>
                   <div className="space-y-2.5">
                     {auditLogs.authLogs.concat(auditLogs.adminLogs).slice(0, 15).map((log, i) => (
                       <div
                         key={log.id || i}
-                        className="p-3.5 rounded-xl bg-white border border-amber-100 shadow-xs flex items-center justify-between text-xs"
+                        className="p-3.5 rounded-xl bg-white border border-gray-100 shadow-xs flex items-center justify-between text-xs"
                       >
                         <div className="flex items-center space-x-3">
-                          <div className="w-8 h-8 rounded-lg bg-[#FAF7EE] border border-amber-200/80 flex items-center justify-center text-amber-700">
+                          <div className="w-8 h-8 rounded-lg bg-[#FFF8E1] border border-[#F5B820]/20 flex items-center justify-center text-[#F5B820]">
                             <Lock className="w-4 h-4" />
                           </div>
                           <div>
-                            <p className="font-bold text-slate-900">
+                            <p className="font-bold text-gray-900">
                               {log.event || log.action}
                             </p>
-                            <p className="text-[11px] text-slate-500">
+                            <p className="text-[11px] text-gray-500">
                               Target: {log.email || log.targetResource || 'System'} • {log.reason || 'User action'}
                             </p>
                           </div>
                         </div>
 
-                        <span className="text-[10px] text-slate-400 font-mono">
+                        <span className="text-[10px] text-gray-400 font-mono">
                           {new Date(log.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
                         </span>
                       </div>

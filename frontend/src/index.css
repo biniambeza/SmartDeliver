@@ -2,19 +2,73 @@
 
 @layer base {
   body {
-    @apply bg-[#FDFBF7] text-slate-900 antialiased selection:bg-amber-400 selection:text-slate-950 font-sans;
+    @apply bg-white text-gray-900 antialiased selection:bg-yellow-400 selection:text-gray-950 font-sans;
   }
 }
 
-/* Custom soft shadows and warm glow effects */
+/* SmartDeliver Brand Color Variables */
+:root {
+  --sd-yellow: #F5B820;
+  --sd-yellow-light: #FBD968;
+  --sd-yellow-pale: #FFF8E1;
+  --sd-green: #1E8C45;
+  --sd-green-dark: #166B35;
+  --sd-green-light: #E8F5E9;
+  --sd-white: #FFFFFF;
+}
+
+/* Custom soft shadows */
 .shadow-soft {
-  box-shadow: 0 4px 20px -2px rgba(245, 158, 11, 0.08), 0 2px 6px -1px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 4px 20px -2px rgba(245, 184, 32, 0.10), 0 2px 6px -1px rgba(0, 0, 0, 0.04);
 }
 
 .shadow-card {
-  box-shadow: 0 10px 30px -4px rgba(15, 23, 42, 0.05), 0 4px 10px -2px rgba(15, 23, 42, 0.02);
+  box-shadow: 0 10px 30px -4px rgba(15, 23, 42, 0.06), 0 4px 10px -2px rgba(15, 23, 42, 0.02);
 }
 
 .shadow-card-hover {
-  box-shadow: 0 20px 40px -8px rgba(245, 158, 11, 0.15), 0 8px 16px -4px rgba(5, 150, 105, 0.08);
+  box-shadow: 0 20px 40px -8px rgba(245, 184, 32, 0.18), 0 8px 16px -4px rgba(30, 140, 69, 0.08);
 }
+
+/* Smooth animations */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(24px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes glow {
+  0%, 100% { box-shadow: 0 0 8px rgba(245, 184, 32, 0.3); }
+  50% { box-shadow: 0 0 20px rgba(245, 184, 32, 0.5); }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.5s ease-out both;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.4s ease-out both;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-glow {
+  animation: glow 2s ease-in-out infinite;
+}
+
+/* Staggered delays for children animations */
+.stagger-1 { animation-delay: 0.1s; }
+.stagger-2 { animation-delay: 0.2s; }
+.stagger-3 { animation-delay: 0.3s; }
+.stagger-4 { animation-delay: 0.4s; }

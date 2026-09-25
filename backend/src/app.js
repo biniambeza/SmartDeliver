@@ -13,7 +13,7 @@ const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
 // Setup Socket.io
 const io = new Server(server, {
   cors: {
-    origin: CLIENT_URL,
+    origin: true,
     methods: ['GET', 'POST', 'PATCH', 'DELETE'],
     credentials: true,
   },
@@ -22,7 +22,7 @@ const io = new Server(server, {
 // Middleware
 app.use(
   cors({
-    origin: CLIENT_URL,
+    origin: true,
     credentials: true,
   })
 );
