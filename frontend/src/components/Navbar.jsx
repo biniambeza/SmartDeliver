@@ -15,7 +15,7 @@ import {
   ChevronDown
 } from 'lucide-react';
 
-export default function Navbar({ onOpenTrack, onOpenVendorPortal }) {
+export default function Navbar({ onOpenTrack, onOpenVendorPortal, onOpenAI, onOpenAdmin }) {
   const { user, logout, openLogin, openRegister } = useAuth();
   const { itemsCount, openCart } = useCart();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -91,13 +91,13 @@ export default function Navbar({ onOpenTrack, onOpenVendorPortal }) {
               <MapPin className="w-4 h-4 mr-2 text-slate-400" />
               Track Order
             </button>
-            <a
-              href="#support"
-              className="px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition-colors flex items-center"
+            <button
+              onClick={onOpenAI}
+              className="px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition-colors flex items-center cursor-pointer"
             >
               <Bot className="w-4 h-4 mr-2 text-emerald-400" />
               AI Support
-            </a>
+            </button>
           </nav>
 
           {/* User Authentication & Action Area */}
@@ -166,15 +166,16 @@ export default function Navbar({ onOpenTrack, onOpenVendorPortal }) {
                       </a>
                     )}
 
-                    {user.role === 'ADMIN' && (
-                      <a
-                        href="#admin-dashboard"
-                        className="flex items-center px-3 py-2 text-sm text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"
-                      >
-                        <ShieldCheck className="w-4 h-4 mr-2.5 text-rose-400" />
-                        Admin Operations
-                      </a>
-                    )}
+                    <button
+                      onClick={() => {
+                        setProfileDropdownOpen(false);
+                        onOpenAdmin();
+                      }}
+                      className="w-full text-left flex items-center px-3 py-2 text-sm text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-colors cursor-pointer"
+                    >
+                      <ShieldCheck className="w-4 h-4 mr-2.5 text-rose-400" />
+                      Admin Superpanel
+                    </button>
 
                     <button
                       onClick={() => {
@@ -258,12 +259,24 @@ export default function Navbar({ onOpenTrack, onOpenVendorPortal }) {
           >
             Track Order
           </button>
-          <a
-            href="#support"
-            className="block px-3 py-2 rounded-lg text-base font-medium text-slate-300 hover:bg-slate-800"
+          <button
+            onClick={() => {
+              setMobileMenuOpen(false);
+              onOpenAI();
+            }}
+            className="w-full text-left block px-3 py-2 rounded-lg text-base font-medium text-slate-300 hover:bg-slate-800 cursor-pointer"
           >
-            AI Support
-          </a>
+            AI Support Assistant
+          </button>
+          <button
+            onClick={() => {
+              setMobileMenuOpen(false);
+              onOpenAdmin();
+            }}
+            className="w-full text-left block px-3 py-2 rounded-lg text-base font-medium text-rose-400 hover:bg-slate-800 cursor-pointer"
+          >
+            Admin Superpanel
+          </button>
 
           <div className="pt-4 border-t border-slate-800">
             {user ? (

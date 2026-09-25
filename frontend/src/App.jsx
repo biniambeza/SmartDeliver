@@ -9,6 +9,8 @@ import OrderSuccessModal from './components/OrderSuccessModal';
 import ChapaPaymentModal from './components/ChapaPaymentModal';
 import OrderTrackerModal from './components/OrderTrackerModal';
 import VendorDashboardModal from './components/VendorDashboardModal';
+import AIAssistantModal from './components/AIAssistantModal';
+import AdminSuperpanelModal from './components/AdminSuperpanelModal';
 import api from './lib/api';
 import {
   CheckCircle2,
@@ -21,7 +23,8 @@ import {
   Sparkles,
   Users,
   Store,
-  Bike
+  Bike,
+  Bot
 } from 'lucide-react';
 
 function Dashboard() {
@@ -33,6 +36,8 @@ function Dashboard() {
   const [activePaymentOrder, setActivePaymentOrder] = useState(null);
   const [trackedOrderId, setTrackedOrderId] = useState(null);
   const [vendorModalOpen, setVendorModalOpen] = useState(false);
+  const [aiModalOpen, setAiModalOpen] = useState(false);
+  const [adminModalOpen, setAdminModalOpen] = useState(false);
 
   useEffect(() => {
     const checkSystemHealth = async () => {
@@ -57,6 +62,8 @@ function Dashboard() {
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-emerald-500 selection:text-slate-950">
       <Navbar 
         onOpenVendorPortal={() => setVendorModalOpen(true)}
+        onOpenAI={() => setAiModalOpen(true)}
+        onOpenAdmin={() => setAdminModalOpen(true)}
         onOpenTrack={() => {
           // Track the last order or ask
           if (lastPlacedOrder?.id) {
@@ -108,6 +115,27 @@ function Dashboard() {
         isOpen={vendorModalOpen}
         onClose={() => setVendorModalOpen(false)}
       />
+      <AIAssistantModal
+        isOpen={aiModalOpen}
+        onClose={() => setAiModalOpen(false)}
+      />
+      <AdminSuperpanelModal
+        isOpen={adminModalOpen}
+        onClose={() => setAdminModalOpen(false)}
+      />
+
+      {/* Floating Bottom-Right AI Support Bubble */}
+      <button
+        onClick={() => setAiModalOpen(true)}
+        className="fixed bottom-6 right-6 z-40 px-4 py-3 rounded-full bg-gradient-to-r from-emerald-500 to-teal-400 text-slate-950 font-bold text-xs shadow-xl shadow-emerald-500/25 flex items-center space-x-2 hover:scale-105 active:scale-95 transition-all cursor-pointer border border-emerald-300/30"
+      >
+        <Bot className="w-4 h-4" />
+        <span className="hidden sm:inline">Ask AI Support</span>
+        <span className="flex h-2 w-2 relative">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-slate-950 opacity-75"></span>
+          <span className="relative inline-flex rounded-full h-2 w-2 bg-slate-950"></span>
+        </span>
+      </button>
 
       <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full">
         {/* System Health Status Bar */}

@@ -105,12 +105,16 @@ const vendorRoutes = require('./modules/vendors/vendor.routes');
 const orderRoutes = require('./modules/orders/order.routes');
 const paymentRoutes = require('./modules/payments/payment.routes');
 const deliveryRoutes = require('./modules/deliveries/delivery.routes');
+const aiRoutes = require('./modules/ai/ai.routes');
+const adminRoutes = require('./modules/admin/admin.routes');
 
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/vendors', vendorRoutes);
 app.use('/api/v1/orders', orderRoutes);
 app.use('/api/v1/payments', paymentRoutes);
 app.use('/api/v1/deliveries', deliveryRoutes);
+app.use('/api/v1/ai', aiRoutes);
+app.use('/api/v1/admin', adminRoutes);
 
 // 404 Handler
 app.use((req, res) => {
