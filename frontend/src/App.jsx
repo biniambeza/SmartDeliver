@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import AuthModal from './components/AuthModal';
+import Storefront from './components/Storefront';
 import api from './lib/api';
 import {
   CheckCircle2,
@@ -137,7 +138,12 @@ function Dashboard() {
           </div>
         </section>
 
-        {/* Slice 1 Verification Playground */}
+        {/* Storefront & Vendor Marketplace (Slice 2) */}
+        <section className="mb-16">
+          <Storefront />
+        </section>
+
+        {/* Slice Architecture Capabilities */}
         <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
           {/* Card 1: Role-Based Access */}
           <div className="p-6 rounded-2xl bg-slate-900/50 border border-slate-800 hover:border-slate-700 transition-all">
