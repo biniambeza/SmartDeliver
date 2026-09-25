@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useCart } from '../context/CartContext';
 import { 
   ShoppingBag, 
   MapPin, 
@@ -16,6 +17,7 @@ import {
 
 export default function Navbar() {
   const { user, logout, openLogin, openRegister } = useAuth();
+  const { itemsCount, openCart } = useCart();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
 
@@ -93,6 +95,20 @@ export default function Navbar() {
 
           {/* User Authentication & Action Area */}
           <div className="hidden md:flex items-center space-x-3">
+            {/* Cart Trigger Button */}
+            <button
+              onClick={openCart}
+              className="relative p-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-700/80 transition-all cursor-pointer flex items-center space-x-1.5"
+            >
+              <ShoppingBag className="w-4 h-4 text-emerald-400" />
+              <span className="text-xs font-bold text-white">Cart</span>
+              {itemsCount > 0 && (
+                <span className="ml-1 px-1.5 py-0.2 rounded-full bg-emerald-500 text-slate-950 font-black text-[10px] animate-pulse">
+                  {itemsCount}
+                </span>
+              )}
+            </button>
+
             {user ? (
               <div className="relative">
                 <button
@@ -183,8 +199,19 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* Mobile menu button */}
-          <div className="md:hidden flex items-center">
+          {/* Mobile menu and cart button */}
+          <div className="md:hidden flex items-center space-x-2">
+            <button
+              onClick={openCart}
+              className="relative p-2 rounded-lg text-slate-300 hover:text-white bg-slate-800/80 border border-slate-700/60"
+            >
+              <ShoppingBag className="w-5 h-5 text-emerald-400" />
+              {itemsCount > 0 && (
+                <span className="absolute -top-1 -right-1 px-1.5 py-0.2 rounded-full bg-emerald-500 text-slate-950 font-black text-[9px]">
+                  {itemsCount}
+                </span>
+              )}
+            </button>
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800"

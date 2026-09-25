@@ -11,13 +11,14 @@ import {
 } from 'lucide-react';
 import ProductCard from './ProductCard';
 import api from '../lib/api';
+import { useCart } from '../context/CartContext';
 
 export default function VendorMenuModal({ vendor, onClose }) {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [cartItems, setCartItems] = useState({});
+  const { items, addToCart, openCart } = useCart();
 
   useEffect(() => {
     if (!vendor) return;
@@ -42,10 +43,7 @@ export default function VendorMenuModal({ vendor, onClose }) {
   if (!vendor) return null;
 
   const handleAddToCart = (product) => {
-    setCartItems((prev) => ({
-      ...prev,
-      [product.id]: (prev[product.id] || 0) + 1,
-    }));
+    addToCart(product, vendor);
   };
 
   const filteredProducts = products.filter((p) =>
@@ -53,7 +51,9 @@ export default function VendorMenuModal({ vendor, onClose }) {
     (p.description && p.description.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
-  const totalCartCount = Object.values(cartItems).reduce((a, b) => a + b, 0);
+  const vendorItemsCount = items
+    .filter((i) => i.vendorId === vendor.id)
+    .reduce((acc, i) => acc + i.quantity, 0);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-200">
@@ -163,7 +163,7 @@ export default function VendorMenuModal({ vendor, onClose }) {
                   key={product.id}
                   product={product}
                   onAddToCart={handleAddToCart}
-                  isAdded={Boolean(cartItems[product.id])}
+                  isAdded={Boolean(items.find((i) => i.id === product.id))}
                 />
               ))}
             </div>
@@ -179,16 +179,19 @@ export default function VendorMenuModal({ vendor, onClose }) {
             Back to All Stores
           </button>
 
-          {totalCartCount > 0 && (
+          {vendorItemsCount > 0 && (
             <div className="flex items-center space-x-3">
               <span className="text-xs text-slate-400">
-                {totalCartCount} item(s) selected
+                {vendorItemsCount} item(s) selected
               </span>
               <button
-                onClick={() => alert(`Ready for Checkout (Slice 3)! Items: ${totalCartCount}`)}
+                onClick={() => {
+                  onClose();
+                  openCart();
+                }}
                 className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-400 to-teal-400 hover:from-emerald-300 hover:to-teal-300 text-slate-950 font-bold text-xs shadow-lg shadow-emerald-500/20 transition-all cursor-pointer"
               >
-                Proceed to Order
+                Proceed to Checkout
               </button>
             </div>
           )}

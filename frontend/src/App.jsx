@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { CartProvider, useCart } from './context/CartContext';
 import Navbar from './components/Navbar';
 import AuthModal from './components/AuthModal';
 import Storefront from './components/Storefront';
+import CartDrawer from './components/CartDrawer';
+import OrderSuccessModal from './components/OrderSuccessModal';
 import api from './lib/api';
 import {
   CheckCircle2,
@@ -23,6 +26,7 @@ function Dashboard() {
   const [backendHealth, setBackendHealth] = useState(null);
   const [dbHealth, setDbHealth] = useState(null);
   const [loadingHealth, setLoadingHealth] = useState(true);
+  const [lastPlacedOrder, setLastPlacedOrder] = useState(null);
 
   useEffect(() => {
     const checkSystemHealth = async () => {
@@ -47,6 +51,13 @@ function Dashboard() {
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-emerald-500 selection:text-slate-950">
       <Navbar />
       <AuthModal />
+      <CartDrawer onOrderSuccess={(order) => setLastPlacedOrder(order)} />
+      {lastPlacedOrder && (
+        <OrderSuccessModal
+          order={lastPlacedOrder}
+          onClose={() => setLastPlacedOrder(null)}
+        />
+      )}
 
       <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full">
         {/* System Health Status Bar */}
@@ -193,7 +204,9 @@ function Dashboard() {
 export default function App() {
   return (
     <AuthProvider>
-      <Dashboard />
+      <CartProvider>
+        <Dashboard />
+      </CartProvider>
     </AuthProvider>
   );
 }
