@@ -10,7 +10,7 @@ import {
   Store
 } from 'lucide-react';
 
-export default function OrderSuccessModal({ order, onClose }) {
+export default function OrderSuccessModal({ order, onClose, onOpenPayment }) {
   if (!order) return null;
 
   return (
@@ -104,7 +104,9 @@ export default function OrderSuccessModal({ order, onClose }) {
         <div className="space-y-2.5">
           <button
             onClick={() => {
-              alert(`Connecting to Chapa Escrow Gateway for Order #${order.id.slice(0, 8)}...\nAmount: ${order.totalAmount} ETB\n(Slice 4: Chapa Payment Processing)`);
+              if (onOpenPayment) {
+                onOpenPayment(order);
+              }
             }}
             className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-emerald-400 to-teal-400 hover:from-emerald-300 hover:to-teal-300 text-slate-950 font-bold text-sm shadow-xl shadow-emerald-500/20 hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center space-x-2 cursor-pointer"
           >

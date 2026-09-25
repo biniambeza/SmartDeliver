@@ -100,10 +100,12 @@ app.get('/api/v1', (req, res) => {
 const authRoutes = require('./modules/auth/auth.routes');
 const vendorRoutes = require('./modules/vendors/vendor.routes');
 const orderRoutes = require('./modules/orders/order.routes');
+const paymentRoutes = require('./modules/payments/payment.routes');
 
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/vendors', vendorRoutes);
 app.use('/api/v1/orders', orderRoutes);
+app.use('/api/v1/payments', paymentRoutes);
 
 // 404 Handler
 app.use((req, res) => {

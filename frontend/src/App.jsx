@@ -6,6 +6,7 @@ import AuthModal from './components/AuthModal';
 import Storefront from './components/Storefront';
 import CartDrawer from './components/CartDrawer';
 import OrderSuccessModal from './components/OrderSuccessModal';
+import ChapaPaymentModal from './components/ChapaPaymentModal';
 import api from './lib/api';
 import {
   CheckCircle2,
@@ -27,6 +28,7 @@ function Dashboard() {
   const [dbHealth, setDbHealth] = useState(null);
   const [loadingHealth, setLoadingHealth] = useState(true);
   const [lastPlacedOrder, setLastPlacedOrder] = useState(null);
+  const [activePaymentOrder, setActivePaymentOrder] = useState(null);
 
   useEffect(() => {
     const checkSystemHealth = async () => {
@@ -56,6 +58,16 @@ function Dashboard() {
         <OrderSuccessModal
           order={lastPlacedOrder}
           onClose={() => setLastPlacedOrder(null)}
+          onOpenPayment={(order) => {
+            setLastPlacedOrder(null);
+            setActivePaymentOrder(order);
+          }}
+        />
+      )}
+      {activePaymentOrder && (
+        <ChapaPaymentModal
+          order={activePaymentOrder}
+          onClose={() => setActivePaymentOrder(null)}
         />
       )}
 
