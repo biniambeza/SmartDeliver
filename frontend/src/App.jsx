@@ -8,6 +8,7 @@ import CartDrawer from './components/CartDrawer';
 import OrderSuccessModal from './components/OrderSuccessModal';
 import ChapaPaymentModal from './components/ChapaPaymentModal';
 import OrderTrackerModal from './components/OrderTrackerModal';
+import VendorDashboardModal from './components/VendorDashboardModal';
 import api from './lib/api';
 import {
   CheckCircle2,
@@ -31,6 +32,7 @@ function Dashboard() {
   const [lastPlacedOrder, setLastPlacedOrder] = useState(null);
   const [activePaymentOrder, setActivePaymentOrder] = useState(null);
   const [trackedOrderId, setTrackedOrderId] = useState(null);
+  const [vendorModalOpen, setVendorModalOpen] = useState(false);
 
   useEffect(() => {
     const checkSystemHealth = async () => {
@@ -53,23 +55,26 @@ function Dashboard() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-emerald-500 selection:text-slate-950">
-      <Navbar onOpenTrack={() => {
-        // Track the last order or ask
-        if (lastPlacedOrder?.id) {
-          setTrackedOrderId(lastPlacedOrder.id);
-        } else {
-          api.get('/orders/my-orders').then(res => {
-            if (res.data.orders?.length > 0) {
-              setTrackedOrderId(res.data.orders[0].id);
-            } else {
-              alert('No active orders found. Place an order from any store to start tracking live!');
-            }
-          }).catch(() => {
-            alert('Please sign in to track your deliveries.');
-            openLogin();
-          });
-        }
-      }} />
+      <Navbar 
+        onOpenVendorPortal={() => setVendorModalOpen(true)}
+        onOpenTrack={() => {
+          // Track the last order or ask
+          if (lastPlacedOrder?.id) {
+            setTrackedOrderId(lastPlacedOrder.id);
+          } else {
+            api.get('/orders/my-orders').then(res => {
+              if (res.data.orders?.length > 0) {
+                setTrackedOrderId(res.data.orders[0].id);
+              } else {
+                alert('No active orders found. Place an order from any store to start tracking live!');
+              }
+            }).catch(() => {
+              alert('Please sign in to track your deliveries.');
+              openLogin();
+            });
+          }
+        }} 
+      />
       <AuthModal />
       <CartDrawer onOrderSuccess={(order) => setLastPlacedOrder(order)} />
       {lastPlacedOrder && (
@@ -99,6 +104,10 @@ function Dashboard() {
           onClose={() => setTrackedOrderId(null)}
         />
       )}
+      <VendorDashboardModal
+        isOpen={vendorModalOpen}
+        onClose={() => setVendorModalOpen(false)}
+      />
 
       <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full">
         {/* System Health Status Bar */}

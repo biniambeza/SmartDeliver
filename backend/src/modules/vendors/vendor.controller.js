@@ -107,7 +107,6 @@ exports.getVendorProducts = async (req, res, next) => {
     const { id } = req.params;
     const { category, search } = req.query;
 
-    // Check if vendor exists
     const vendor = await prisma.vendor.findUnique({
       where: { id },
     });
@@ -144,6 +143,216 @@ exports.getVendorProducts = async (req, res, next) => {
       vendorId: id,
       count: products.length,
       products,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * GET /api/v1/vendors/me/dashboard
+ * Authenticated Merchant Portal: Fetch store stats, active orders queue, and products
+ */
+exports.getVendorDashboard = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+
+    // Find vendor affiliated with this user or fallback to first active vendor for testing
+    let vendor = await prisma.vendor.findUnique({
+      where: { userId },
+    });
+
+    if (!vendor) {
+      vendor = await prisma.vendor.findFirst({
+        where: { isActive: true },
+      });
+    }
+
+    if (!vendor) {
+      return res.status(404).json({ success: false, error: 'No active vendor store found' });
+    }
+
+    // 1. Fetch Orders for this vendor
+    const orders = await prisma.order.findMany({
+      where: { vendorId: vendor.id },
+      orderBy: { createdAt: 'desc' },
+      include: {
+        customer: {
+          select: { id: true, name: true, phone: true, email: true },
+        },
+        items: {
+          include: {
+            product: {
+              select: { id: true, name: true, price: true, imageUrl: true },
+            },
+          },
+        },
+        payment: true,
+        delivery: {
+          include: {
+            rider: { select: { id: true, name: true, phone: true } },
+          },
+        },
+      },
+    });
+
+    // 2. Fetch Products
+    const products = await prisma.product.findMany({
+      where: { vendorId: vendor.id },
+      orderBy: { createdAt: 'asc' },
+    });
+
+    // 3. Compute Metrics
+    const totalOrders = orders.length;
+    const totalRevenue = orders
+      .filter((o) => o.status !== 'CANCELLED' && o.status !== 'PENDING')
+      .reduce((acc, o) => acc + Number(o.totalAmount), 0);
+    const activeOrders = orders.filter((o) =>
+      ['PAID', 'PREPARING', 'READY_FOR_PICKUP'].includes(o.status)
+    ).length;
+    const deliveredOrders = orders.filter((o) => o.status === 'DELIVERED').length;
+
+    res.status(200).json({
+      success: true,
+      vendor,
+      stats: {
+        totalOrders,
+        totalRevenue: Math.round(totalRevenue * 100) / 100,
+        activeOrders,
+        deliveredOrders,
+        totalProducts: products.length,
+        availableProducts: products.filter((p) => p.isAvailable).length,
+      },
+      orders,
+      products,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * PATCH /api/v1/vendors/orders/:id/status
+ * Update order status from vendor side (e.g. PREPARING, READY_FOR_PICKUP)
+ */
+exports.updateVendorOrderStatus = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    const allowedStatuses = ['PREPARING', 'READY_FOR_PICKUP', 'CANCELLED'];
+    if (!allowedStatuses.includes(status)) {
+      return res.status(400).json({
+        success: false,
+        error: `Invalid status. Allowed statuses: ${allowedStatuses.join(', ')}`,
+      });
+    }
+
+    const order = await prisma.order.findUnique({
+      where: { id },
+      include: { vendor: true },
+    });
+
+    if (!order) {
+      return res.status(404).json({ success: false, error: 'Order not found' });
+    }
+
+    const updatedOrder = await prisma.order.update({
+      where: { id },
+      data: { status },
+      include: {
+        customer: { select: { id: true, name: true, phone: true } },
+        items: { include: { product: true } },
+        payment: true,
+        delivery: true,
+      },
+    });
+
+    // Broadcast WebSocket updates to customer tracking room
+    const io = req.app.get('io') || req.io;
+    if (io) {
+      io.to(`order:${id}`).to(`order_${id}`).emit('order:status_changed', {
+        orderId: id,
+        status,
+        vendorId: order.vendorId,
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: `Order status updated to ${status}`,
+      order: updatedOrder,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * PATCH /api/v1/vendors/products/:id/toggle
+ * Toggle product availability (in-stock / 86-ed out)
+ */
+exports.toggleProductAvailability = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const product = await prisma.product.findUnique({
+      where: { id },
+    });
+
+    if (!product) {
+      return res.status(404).json({ success: false, error: 'Product not found' });
+    }
+
+    const updated = await prisma.product.update({
+      where: { id },
+      data: {
+        isAvailable: !product.isAvailable,
+      },
+    });
+
+    // Real-time broadcast
+    const io = req.app.get('io') || req.io;
+    if (io) {
+      io.to(`vendor_${product.vendorId}`).emit('vendor:product_updated', {
+        productId: id,
+        isAvailable: updated.isAvailable,
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: `Product "${updated.name}" availability set to ${updated.isAvailable ? 'IN STOCK' : 'OUT OF STOCK'}`,
+      product: updated,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * PATCH /api/v1/vendors/products/:id
+ * Update product pricing or details
+ */
+exports.updateProduct = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { price, name, description } = req.body;
+
+    const data = {};
+    if (price !== undefined) data.price = parseFloat(price);
+    if (name) data.name = name.trim();
+    if (description !== undefined) data.description = description ? description.trim() : null;
+
+    const updated = await prisma.product.update({
+      where: { id },
+      data,
+    });
+
+    res.status(200).json({
+      success: true,
+      message: 'Product updated successfully',
+      product: updated,
     });
   } catch (error) {
     next(error);

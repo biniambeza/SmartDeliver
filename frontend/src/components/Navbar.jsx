@@ -15,7 +15,7 @@ import {
   ChevronDown
 } from 'lucide-react';
 
-export default function Navbar({ onOpenTrack }) {
+export default function Navbar({ onOpenTrack, onOpenVendorPortal }) {
   const { user, logout, openLogin, openRegister } = useAuth();
   const { itemsCount, openCart } = useCart();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -78,6 +78,13 @@ export default function Navbar({ onOpenTrack }) {
               Explore Stores
             </a>
             <button
+              onClick={onOpenVendorPortal}
+              className="px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition-colors flex items-center cursor-pointer"
+            >
+              <Store className="w-4 h-4 mr-2 text-amber-400" />
+              Merchant Hub
+            </button>
+            <button
               onClick={onOpenTrack}
               className="px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition-colors flex items-center cursor-pointer"
             >
@@ -138,15 +145,16 @@ export default function Navbar({ onOpenTrack }) {
                       <p className="text-sm font-medium text-white truncate">{user.email}</p>
                     </div>
                     
-                    {user.role === 'VENDOR' && (
-                      <a
-                        href="#vendor-dashboard"
-                        className="flex items-center px-3 py-2 text-sm text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"
-                      >
-                        <Store className="w-4 h-4 mr-2.5 text-purple-400" />
-                        Vendor Dashboard
-                      </a>
-                    )}
+                    <button
+                      onClick={() => {
+                        setProfileDropdownOpen(false);
+                        onOpenVendorPortal();
+                      }}
+                      className="w-full text-left flex items-center px-3 py-2 text-sm text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-colors cursor-pointer"
+                    >
+                      <Store className="w-4 h-4 mr-2.5 text-amber-400" />
+                      Merchant Portal
+                    </button>
 
                     {user.role === 'RIDER' && (
                       <a
@@ -235,9 +243,18 @@ export default function Navbar({ onOpenTrack }) {
           <button
             onClick={() => {
               setMobileMenuOpen(false);
+              onOpenVendorPortal();
+            }}
+            className="w-full text-left block px-3 py-2 rounded-lg text-base font-medium text-slate-300 hover:bg-slate-800 cursor-pointer"
+          >
+            Merchant Hub
+          </button>
+          <button
+            onClick={() => {
+              setMobileMenuOpen(false);
               onOpenTrack();
             }}
-            className="w-full text-left block px-3 py-2 rounded-lg text-base font-medium text-slate-300 hover:bg-slate-800"
+            className="w-full text-left block px-3 py-2 rounded-lg text-base font-medium text-slate-300 hover:bg-slate-800 cursor-pointer"
           >
             Track Order
           </button>
