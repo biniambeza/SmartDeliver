@@ -7,6 +7,7 @@ import Storefront from './components/Storefront';
 import CartDrawer from './components/CartDrawer';
 import OrderSuccessModal from './components/OrderSuccessModal';
 import ChapaPaymentModal from './components/ChapaPaymentModal';
+import OrderTrackerModal from './components/OrderTrackerModal';
 import api from './lib/api';
 import {
   CheckCircle2,
@@ -29,6 +30,7 @@ function Dashboard() {
   const [loadingHealth, setLoadingHealth] = useState(true);
   const [lastPlacedOrder, setLastPlacedOrder] = useState(null);
   const [activePaymentOrder, setActivePaymentOrder] = useState(null);
+  const [trackedOrderId, setTrackedOrderId] = useState(null);
 
   useEffect(() => {
     const checkSystemHealth = async () => {
@@ -51,7 +53,23 @@ function Dashboard() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-emerald-500 selection:text-slate-950">
-      <Navbar />
+      <Navbar onOpenTrack={() => {
+        // Track the last order or ask
+        if (lastPlacedOrder?.id) {
+          setTrackedOrderId(lastPlacedOrder.id);
+        } else {
+          api.get('/orders/my-orders').then(res => {
+            if (res.data.orders?.length > 0) {
+              setTrackedOrderId(res.data.orders[0].id);
+            } else {
+              alert('No active orders found. Place an order from any store to start tracking live!');
+            }
+          }).catch(() => {
+            alert('Please sign in to track your deliveries.');
+            openLogin();
+          });
+        }
+      }} />
       <AuthModal />
       <CartDrawer onOrderSuccess={(order) => setLastPlacedOrder(order)} />
       {lastPlacedOrder && (
@@ -68,6 +86,17 @@ function Dashboard() {
         <ChapaPaymentModal
           order={activePaymentOrder}
           onClose={() => setActivePaymentOrder(null)}
+          onPaymentSuccess={() => {
+            const paidId = activePaymentOrder.id;
+            setActivePaymentOrder(null);
+            setTrackedOrderId(paidId);
+          }}
+        />
+      )}
+      {trackedOrderId && (
+        <OrderTrackerModal
+          orderId={trackedOrderId}
+          onClose={() => setTrackedOrderId(null)}
         />
       )}
 

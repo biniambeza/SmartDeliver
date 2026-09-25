@@ -205,7 +205,13 @@ exports.getOrderById = async (req, res, next) => {
           },
         },
         payment: true,
-        delivery: true,
+        delivery: {
+          include: {
+            rider: {
+              select: { id: true, name: true, phone: true },
+            },
+          },
+        },
       },
     });
 
@@ -216,9 +222,10 @@ exports.getOrderById = async (req, res, next) => {
     // Role-based authorization: customer who placed it, the vendor owner, assigned rider, or admin
     const isOwner = order.customerId === userId;
     const isVendorOwner = order.vendor.userId === userId;
+    const isRider = order.delivery?.riderId === userId || userRole === 'RIDER';
     const isAdmin = userRole === 'ADMIN';
 
-    if (!isOwner && !isVendorOwner && !isAdmin) {
+    if (!isOwner && !isVendorOwner && !isRider && !isAdmin) {
       return res.status(403).json({ success: false, error: 'Access denied to this order' });
     }
 

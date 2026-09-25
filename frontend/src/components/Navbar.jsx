@@ -15,7 +15,7 @@ import {
   ChevronDown
 } from 'lucide-react';
 
-export default function Navbar() {
+export default function Navbar({ onOpenTrack }) {
   const { user, logout, openLogin, openRegister } = useAuth();
   const { itemsCount, openCart } = useCart();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -77,13 +77,13 @@ export default function Navbar() {
               <Store className="w-4 h-4 mr-2 text-slate-400" />
               Explore Stores
             </a>
-            <a
-              href="#tracking"
-              className="px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition-colors flex items-center"
+            <button
+              onClick={onOpenTrack}
+              className="px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition-colors flex items-center cursor-pointer"
             >
               <MapPin className="w-4 h-4 mr-2 text-slate-400" />
               Track Order
-            </a>
+            </button>
             <a
               href="#support"
               className="px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition-colors flex items-center"
@@ -232,12 +232,15 @@ export default function Navbar() {
           >
             Explore Stores
           </a>
-          <a
-            href="#tracking"
-            className="block px-3 py-2 rounded-lg text-base font-medium text-slate-300 hover:bg-slate-800"
+          <button
+            onClick={() => {
+              setMobileMenuOpen(false);
+              onOpenTrack();
+            }}
+            className="w-full text-left block px-3 py-2 rounded-lg text-base font-medium text-slate-300 hover:bg-slate-800"
           >
             Track Order
-          </a>
+          </button>
           <a
             href="#support"
             className="block px-3 py-2 rounded-lg text-base font-medium text-slate-300 hover:bg-slate-800"

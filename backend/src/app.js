@@ -33,16 +33,19 @@ app.use(express.urlencoded({ extended: true }));
 io.on('connection', (socket) => {
   console.log(`⚡ Socket connected: ${socket.id}`);
 
-  // Join order-scoped tracking room
+  // Join order-scoped tracking room (support both formats)
   socket.on('join:order', (orderId) => {
     socket.join(`order:${orderId}`);
-    console.log(`👥 Socket ${socket.id} joined room order:${orderId}`);
+    socket.join(`order_${orderId}`);
+    console.log(`👥 Socket ${socket.id} joined tracking rooms for order ${orderId}`);
   });
 
   socket.on('disconnect', () => {
     console.log(`🔌 Socket disconnected: ${socket.id}`);
   });
 });
+
+app.set('io', io);
 
 // Make io accessible to route handlers via req.io
 app.use((req, res, next) => {
@@ -101,11 +104,13 @@ const authRoutes = require('./modules/auth/auth.routes');
 const vendorRoutes = require('./modules/vendors/vendor.routes');
 const orderRoutes = require('./modules/orders/order.routes');
 const paymentRoutes = require('./modules/payments/payment.routes');
+const deliveryRoutes = require('./modules/deliveries/delivery.routes');
 
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/vendors', vendorRoutes);
 app.use('/api/v1/orders', orderRoutes);
 app.use('/api/v1/payments', paymentRoutes);
+app.use('/api/v1/deliveries', deliveryRoutes);
 
 // 404 Handler
 app.use((req, res) => {
