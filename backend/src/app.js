@@ -52,8 +52,8 @@ app.use((req, res, next) => {
 
 const prisma = require('./lib/prisma');
 
-// Health Checks
-app.get('/health', (req, res) => {
+// Health Checks (accessible at /health and /api/v1/health)
+const handleHealth = (req, res) => {
   res.status(200).json({
     status: 'healthy',
     timestamp: new Date().toISOString(),
@@ -63,9 +63,9 @@ app.get('/health', (req, res) => {
       socket: 'READY',
     },
   });
-});
+};
 
-app.get('/health/db', async (req, res) => {
+const handleDbHealth = async (req, res) => {
   try {
     await prisma.$queryRaw`SELECT 1`;
     res.status(200).json({
@@ -82,7 +82,10 @@ app.get('/health/db', async (req, res) => {
       error: error.message,
     });
   }
-});
+};
+
+app.get(['/health', '/api/v1/health'], handleHealth);
+app.get(['/health/db', '/api/v1/health/db'], handleDbHealth);
 
 // Base API route
 app.get('/api/v1', (req, res) => {

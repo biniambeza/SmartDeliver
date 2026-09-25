@@ -3,14 +3,14 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import AuthModal from './components/AuthModal';
 import api from './lib/api';
-import { 
-  CheckCircle2, 
-  XCircle, 
-  Server, 
-  Database, 
-  ShieldAlert, 
-  ArrowRight, 
-  ShoppingBag, 
+import {
+  CheckCircle2,
+  XCircle,
+  Server,
+  Database,
+  ShieldAlert,
+  ArrowRight,
+  ShoppingBag,
   Sparkles,
   Users,
   Store,
