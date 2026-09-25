@@ -53,22 +53,11 @@ export default function Navbar({ onOpenTrack, onOpenVendorPortal, onOpenAI, onOp
   return (
     <header className="sticky top-0 z-40 w-full backdrop-blur-md bg-white/95 border-b border-gray-100 transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20">
+        <div className="flex items-center justify-between h-24">
           
           {/* Brand Logo - SmartDeliver */}
-          <div className="flex items-center space-x-3 cursor-pointer">
-            <div className="w-11 h-11 rounded-2xl bg-[#F5B820] flex items-center justify-center shadow-md shadow-[#F5B820]/30 text-white font-black">
-              <ShoppingBag className="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <span className="text-2xl font-black tracking-tight text-gray-900 font-sans">
-                <span className="text-[#F5B820]">{t('nav.smart')}</span>{t('nav.deliver')}
-                <span className="inline-block w-2 h-2 rounded-full bg-[#1E8C45] ml-0.5"></span>
-              </span>
-              <span className="block text-[10px] uppercase tracking-wider font-bold text-[#1E8C45]">
-                Smart Food & Grocery
-              </span>
-            </div>
+          <div className="flex items-center cursor-pointer">
+            <img src="/logo.png" alt="SmartDeliver Logo" className="h-24 w-auto mix-blend-multiply" />
           </div>
 
           {/* Desktop Navigation */}
