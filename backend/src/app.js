@@ -50,6 +50,8 @@ app.use((req, res, next) => {
   next();
 });
 
+const prisma = require('./lib/prisma');
+
 // Health Checks
 app.get('/health', (req, res) => {
   res.status(200).json({
@@ -63,6 +65,25 @@ app.get('/health', (req, res) => {
   });
 });
 
+app.get('/health/db', async (req, res) => {
+  try {
+    await prisma.$queryRaw`SELECT 1`;
+    res.status(200).json({
+      status: 'healthy',
+      database: 'connected',
+      provider: 'Supabase (PostgreSQL)',
+      timestamp: new Date().toISOString(),
+    });
+  } catch (error) {
+    console.error('Database Health Check Failed:', error);
+    res.status(500).json({
+      status: 'unhealthy',
+      database: 'disconnected',
+      error: error.message,
+    });
+  }
+});
+
 // Base API route
 app.get('/api/v1', (req, res) => {
   res.status(200).json({
@@ -71,6 +92,10 @@ app.get('/api/v1', (req, res) => {
     documentation: '/docs',
   });
 });
+
+// Module Routes
+const authRoutes = require('./modules/auth/auth.routes');
+app.use('/api/v1/auth', authRoutes);
 
 // 404 Handler
 app.use((req, res) => {
