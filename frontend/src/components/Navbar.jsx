@@ -70,7 +70,7 @@ export default function Navbar({ onOpenTrack, onOpenVendorPortal, onOpenAI, onOp
               Explore Stores
             </a>
             <button
-              onClick={onOpenVendorPortal}
+              onClick={() => window.location.href = '/vendor'}
               className="px-3.5 py-2 rounded-full text-sm font-semibold text-gray-700 hover:text-gray-950 hover:bg-[#E8F5E9] transition-all flex items-center cursor-pointer"
             >
               <Store className="w-4 h-4 mr-1.5 text-[#1E8C45]" />
@@ -148,7 +148,7 @@ export default function Navbar({ onOpenTrack, onOpenVendorPortal, onOpenAI, onOp
                     <button
                       onClick={() => {
                         setProfileDropdownOpen(false);
-                        onOpenVendorPortal();
+                        window.location.href = '/vendor';
                       }}
                       className="w-full text-left flex items-center px-3 py-2 text-xs font-semibold text-gray-700 hover:text-gray-950 hover:bg-[#FFF8E1] rounded-xl transition-colors cursor-pointer"
                     >
@@ -159,7 +159,18 @@ export default function Navbar({ onOpenTrack, onOpenVendorPortal, onOpenAI, onOp
                     <button
                       onClick={() => {
                         setProfileDropdownOpen(false);
-                        onOpenAdmin();
+                        window.location.href = '/rider';
+                      }}
+                      className="w-full text-left flex items-center px-3 py-2 text-xs font-semibold text-gray-700 hover:text-gray-950 hover:bg-[#E8F5E9] rounded-xl transition-colors cursor-pointer"
+                    >
+                      <Bike className="w-4 h-4 mr-2.5 text-[#1E8C45]" />
+                      Rider Dispatch
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        setProfileDropdownOpen(false);
+                        window.location.href = '/admin';
                       }}
                       className="w-full text-left flex items-center px-3 py-2 text-xs font-semibold text-gray-700 hover:text-gray-950 hover:bg-[#E8F5E9] rounded-xl transition-colors cursor-pointer"
                     >
