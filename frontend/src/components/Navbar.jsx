@@ -144,39 +144,62 @@ export default function Navbar({ onOpenTrack, onOpenVendorPortal, onOpenAI, onOp
                       <p className="text-[11px] text-gray-400 font-semibold">Signed in as</p>
                       <p className="text-xs font-bold text-gray-900 truncate">{user.email}</p>
                     </div>
-                    
-                    <button
-                      onClick={() => {
-                        setProfileDropdownOpen(false);
-                        window.location.href = '/vendor';
-                      }}
-                      className="w-full text-left flex items-center px-3 py-2 text-xs font-semibold text-gray-700 hover:text-gray-950 hover:bg-[#FFF8E1] rounded-xl transition-colors cursor-pointer"
-                    >
-                      <Store className="w-4 h-4 mr-2.5 text-[#F5B820]" />
-                      Merchant Portal
-                    </button>
+                    {/* Role-specific dashboard link — each role only sees their own */}
+                    {user.role === 'CUSTOMER' && (
+                      <button
+                        onClick={() => { setProfileDropdownOpen(false); window.location.href = '/customer'; }}
+                        className="w-full text-left flex items-center px-3 py-2 text-xs font-semibold text-gray-700 hover:text-gray-950 hover:bg-[#E8F5E9] rounded-xl transition-colors cursor-pointer"
+                      >
+                        <User className="w-4 h-4 mr-2.5 text-[#1E8C45]" />
+                        My Dashboard
+                      </button>
+                    )}
 
-                    <button
-                      onClick={() => {
-                        setProfileDropdownOpen(false);
-                        window.location.href = '/rider';
-                      }}
-                      className="w-full text-left flex items-center px-3 py-2 text-xs font-semibold text-gray-700 hover:text-gray-950 hover:bg-[#E8F5E9] rounded-xl transition-colors cursor-pointer"
-                    >
-                      <Bike className="w-4 h-4 mr-2.5 text-[#1E8C45]" />
-                      Rider Dispatch
-                    </button>
+                    {user.role === 'VENDOR' && (
+                      <button
+                        onClick={() => { setProfileDropdownOpen(false); window.location.href = '/vendor'; }}
+                        className="w-full text-left flex items-center px-3 py-2 text-xs font-semibold text-gray-700 hover:text-gray-950 hover:bg-[#FFF8E1] rounded-xl transition-colors cursor-pointer"
+                      >
+                        <Store className="w-4 h-4 mr-2.5 text-[#F5B820]" />
+                        Merchant Portal
+                      </button>
+                    )}
 
-                    <button
-                      onClick={() => {
-                        setProfileDropdownOpen(false);
-                        window.location.href = '/admin';
-                      }}
-                      className="w-full text-left flex items-center px-3 py-2 text-xs font-semibold text-gray-700 hover:text-gray-950 hover:bg-[#E8F5E9] rounded-xl transition-colors cursor-pointer"
-                    >
-                      <ShieldCheck className="w-4 h-4 mr-2.5 text-[#1E8C45]" />
-                      Admin Superpanel
-                    </button>
+                    {user.role === 'RIDER' && (
+                      <button
+                        onClick={() => { setProfileDropdownOpen(false); window.location.href = '/rider'; }}
+                        className="w-full text-left flex items-center px-3 py-2 text-xs font-semibold text-gray-700 hover:text-gray-950 hover:bg-[#E8F5E9] rounded-xl transition-colors cursor-pointer"
+                      >
+                        <Bike className="w-4 h-4 mr-2.5 text-[#1E8C45]" />
+                        Rider Dispatch
+                      </button>
+                    )}
+
+                    {user.role === 'ADMIN' && (
+                      <>
+                        <button
+                          onClick={() => { setProfileDropdownOpen(false); window.location.href = '/admin'; }}
+                          className="w-full text-left flex items-center px-3 py-2 text-xs font-semibold text-gray-700 hover:text-gray-950 hover:bg-red-50 rounded-xl transition-colors cursor-pointer"
+                        >
+                          <ShieldCheck className="w-4 h-4 mr-2.5 text-red-600" />
+                          Admin Superpanel
+                        </button>
+                        <button
+                          onClick={() => { setProfileDropdownOpen(false); window.location.href = '/vendor'; }}
+                          className="w-full text-left flex items-center px-3 py-2 text-xs font-semibold text-gray-700 hover:text-gray-950 hover:bg-[#FFF8E1] rounded-xl transition-colors cursor-pointer"
+                        >
+                          <Store className="w-4 h-4 mr-2.5 text-[#F5B820]" />
+                          Vendor View
+                        </button>
+                        <button
+                          onClick={() => { setProfileDropdownOpen(false); window.location.href = '/rider'; }}
+                          className="w-full text-left flex items-center px-3 py-2 text-xs font-semibold text-gray-700 hover:text-gray-950 hover:bg-[#E8F5E9] rounded-xl transition-colors cursor-pointer"
+                        >
+                          <Bike className="w-4 h-4 mr-2.5 text-[#1E8C45]" />
+                          Rider View
+                        </button>
+                      </>
+                    )}
 
                     <button
                       onClick={() => {
@@ -237,20 +260,11 @@ export default function Navbar({ onOpenTrack, onOpenVendorPortal, onOpenAI, onOp
       {mobileMenuOpen && (
         <div className="md:hidden border-t border-gray-100 bg-white px-4 pt-3 pb-6 space-y-2 animate-fade-in-up">
           <a
-            href="#vendors"
+            href="/"
             className="block px-3 py-2 rounded-xl text-base font-semibold text-gray-800 hover:bg-[#FFF8E1]"
           >
             Explore Stores
           </a>
-          <button
-            onClick={() => {
-              setMobileMenuOpen(false);
-              onOpenVendorPortal();
-            }}
-            className="w-full text-left block px-3 py-2 rounded-xl text-base font-semibold text-gray-800 hover:bg-[#FFF8E1] cursor-pointer"
-          >
-            Merchant Hub
-          </button>
           <button
             onClick={() => {
               setMobileMenuOpen(false);
@@ -269,15 +283,32 @@ export default function Navbar({ onOpenTrack, onOpenVendorPortal, onOpenAI, onOp
           >
             AI Support Assistant
           </button>
-          <button
-            onClick={() => {
-              setMobileMenuOpen(false);
-              onOpenAdmin();
-            }}
-            className="w-full text-left block px-3 py-2 rounded-xl text-base font-semibold text-[#1E8C45] hover:bg-[#E8F5E9] cursor-pointer"
-          >
-            Admin Superpanel
-          </button>
+
+          {/* Role-specific dashboard link for mobile */}
+          {user && user.role === 'CUSTOMER' && (
+            <button onClick={() => { setMobileMenuOpen(false); window.location.href = '/customer'; }}
+              className="w-full text-left block px-3 py-2 rounded-xl text-base font-semibold text-[#1E8C45] hover:bg-[#E8F5E9] cursor-pointer">
+              My Dashboard
+            </button>
+          )}
+          {user && user.role === 'VENDOR' && (
+            <button onClick={() => { setMobileMenuOpen(false); window.location.href = '/vendor'; }}
+              className="w-full text-left block px-3 py-2 rounded-xl text-base font-semibold text-[#F5B820] hover:bg-[#FFF8E1] cursor-pointer">
+              Merchant Portal
+            </button>
+          )}
+          {user && user.role === 'RIDER' && (
+            <button onClick={() => { setMobileMenuOpen(false); window.location.href = '/rider'; }}
+              className="w-full text-left block px-3 py-2 rounded-xl text-base font-semibold text-[#1E8C45] hover:bg-[#E8F5E9] cursor-pointer">
+              Rider Dispatch
+            </button>
+          )}
+          {user && user.role === 'ADMIN' && (
+            <button onClick={() => { setMobileMenuOpen(false); window.location.href = '/admin'; }}
+              className="w-full text-left block px-3 py-2 rounded-xl text-base font-semibold text-red-600 hover:bg-red-50 cursor-pointer">
+              Admin Superpanel
+            </button>
+          )}
 
           <div className="pt-4 border-t border-gray-200">
             {user ? (
