@@ -450,6 +450,11 @@ function Dashboard() {
   );
 }
 
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import RequireRole from './routes/RequireRole';
+import VendorDashboardPage from './pages/vendor/VendorDashboard';
+import AdminDashboardPage from './pages/admin/AdminDashboard';
+import RiderDashboardPage from './pages/rider/RiderDashboard';
 import { LanguageProvider } from './contexts/LanguageContext';
 
 export default function App() {
@@ -457,7 +462,28 @@ export default function App() {
     <LanguageProvider>
       <AuthProvider>
         <CartProvider>
-          <Dashboard />
+          <Router>
+            <Routes>
+              {/* Public/Customer Route */}
+              <Route path="/" element={<Dashboard />} />
+              
+              {/* Protected Vendor Route */}
+              <Route element={<RequireRole allowedRoles={['VENDOR', 'ADMIN']} />}>
+                <Route path="/vendor" element={<VendorDashboardPage />} />
+              </Route>
+
+              {/* Protected Rider Route */}
+              <Route element={<RequireRole allowedRoles={['RIDER', 'ADMIN']} />}>
+                <Route path="/rider" element={<RiderDashboardPage />} />
+              </Route>
+
+              {/* Protected Admin Route */}
+              <Route element={<RequireRole allowedRoles={['ADMIN']} />}>
+                <Route path="/admin" element={<AdminDashboardPage />} />
+              </Route>
+
+            </Routes>
+          </Router>
         </CartProvider>
       </AuthProvider>
     </LanguageProvider>
