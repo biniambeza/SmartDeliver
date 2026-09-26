@@ -8,7 +8,7 @@ import ChapaPaymentModal from '../../components/ChapaPaymentModal';
 import OrderTrackerModal from '../../components/OrderTrackerModal';
 import VendorMenuModal from '../../components/VendorMenuModal';
 import { 
-  ShoppingBag, MapPin, Clock, Star, User, CreditCard, Tag, HelpCircle, 
+  ShoppingBag, MapPin, Clock, Star, User, CreditCard, Tag, 
   RefreshCw, FileText, Phone, Plus, Trash2, Edit3, X, ArrowRight, 
   Search, Store, Loader2, CheckCircle2, AlertCircle
 } from 'lucide-react';
@@ -17,15 +17,14 @@ export default function CustomerDashboard() {
   const { user, logout } = useAuth();
   const { itemsCount, openCart, addToCart } = useCart();
 
-  const [activeTab, setActiveTab] = useState('browse'); // 'browse' | 'orders' | 'addresses' | 'account' | 'help'
+  const [activeTab, setActiveTab] = useState('browse'); // 'browse' | 'orders' | 'addresses' | 'account'
   const [loading, setLoading] = useState(true);
 
-  // Real backend data (no hardcoded demo data)
+  // Real backend data
   const [orders, setOrders] = useState([]);
   const [addresses, setAddresses] = useState([]);
   const [paymentMethods, setPaymentMethods] = useState([]);
   const [loyaltyPoints, setLoyaltyPoints] = useState(0);
-  const [supportTickets, setSupportTickets] = useState([]);
   const [offers, setOffers] = useState([]);
   const [vendors, setVendors] = useState([]);
 
@@ -40,7 +39,6 @@ export default function CustomerDashboard() {
   const [trackedOrderId, setTrackedOrderId] = useState(null);
   const [selectedOrderForInvoice, setSelectedOrderForInvoice] = useState(null);
   const [selectedOrderForReview, setSelectedOrderForReview] = useState(null);
-  const [selectedOrderForComplaint, setSelectedOrderForComplaint] = useState(null);
 
   // Forms
   const [profileForm, setProfileForm] = useState({ name: '', phone: '' });
@@ -57,8 +55,6 @@ export default function CustomerDashboard() {
   const [isAddingPayment, setIsAddingPayment] = useState(false);
 
   const [reviewForm, setReviewForm] = useState({ vendorRating: 5, driverRating: 5, comment: '' });
-  const [complaintForm, setComplaintForm] = useState({ reason: 'Missing item', details: '' });
-  const [newTicket, setNewTicket] = useState({ topic: '', details: '' });
 
   // Load real user and catalog data
   const loadData = async () => {
@@ -76,7 +72,6 @@ export default function CustomerDashboard() {
       setAddresses(p.addresses || []);
       setPaymentMethods(p.paymentMethods || []);
       setLoyaltyPoints(p.loyaltyPoints ?? 0);
-      setSupportTickets(p.tickets || []);
       setOffers(offersRes.data.offers || []);
       setVendors(vendorsRes.data.vendors || []);
 
@@ -227,37 +222,6 @@ export default function CustomerDashboard() {
     }
   };
 
-  const handleSubmitComplaint = async (e) => {
-    e.preventDefault();
-    if (!selectedOrderForComplaint) return;
-    try {
-      const res = await api.post('/customer/tickets', {
-        orderId: selectedOrderForComplaint.id,
-        topic: `Issue: ${complaintForm.reason} (${selectedOrderForComplaint.id})`,
-        details: complaintForm.details,
-      });
-      alert('Ticket submitted! Our support team will assist you.');
-      setSupportTickets((prev) => [res.data.ticket, ...prev]);
-      setSelectedOrderForComplaint(null);
-      setComplaintForm({ reason: 'Missing item', details: '' });
-    } catch (err) {
-      alert('Failed to submit ticket');
-    }
-  };
-
-  const handleCreateTicket = async (e) => {
-    e.preventDefault();
-    if (!newTicket.topic.trim() || !newTicket.details.trim()) return;
-    try {
-      const res = await api.post('/customer/tickets', newTicket);
-      setSupportTickets((prev) => [res.data.ticket, ...prev]);
-      setNewTicket({ topic: '', details: '' });
-      alert('Support ticket created!');
-    } catch (err) {
-      alert('Failed to create ticket');
-    }
-  };
-
   const handleRedeemPoints = async () => {
     if (loyaltyPoints < 100) {
       alert('You need at least 100 SmartPoints to redeem.');
@@ -372,8 +336,7 @@ export default function CustomerDashboard() {
             { key: 'browse', label: 'Explore Stores', icon: Store },
             { key: 'orders', label: `My Orders (${activeOrders.length})`, icon: ShoppingBag },
             { key: 'addresses', label: 'Saved Addresses', icon: MapPin },
-            { key: 'account', label: 'Account & Security', icon: User },
-            { key: 'help', label: 'Rewards & Help', icon: HelpCircle },
+            { key: 'account', label: 'Account & Rewards', icon: User },
           ].map((tab) => (
             <button
               key={tab.key}
@@ -605,13 +568,6 @@ export default function CustomerDashboard() {
                             Rate
                           </button>
                         )}
-
-                        <button
-                          onClick={() => setSelectedOrderForComplaint(order)}
-                          className="text-xs text-slate-400 hover:text-rose-600 font-bold"
-                        >
-                          Report
-                        </button>
                       </div>
                     </div>
                   ))}
@@ -726,10 +682,54 @@ export default function CustomerDashboard() {
         )}
 
         {/* ========================================= */}
-        {/* TAB 4: ACCOUNT & SECURITY */}
+        {/* TAB 4: ACCOUNT & REWARDS */}
         {/* ========================================= */}
         {activeTab === 'account' && (
           <div className="space-y-6">
+            {/* Rewards Banner */}
+            <div className="bg-gradient-to-r from-amber-400 to-amber-500 rounded-2xl p-5 text-slate-950 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+              <div>
+                <p className="font-black text-xs uppercase tracking-wider text-slate-800">SmartRewards Points</p>
+                <h3 className="font-black text-xl">{loyaltyPoints} SmartPoints</h3>
+                <p className="text-xs font-medium text-slate-800">Earn points with every completed order. 100 points = $1 voucher.</p>
+              </div>
+              <button
+                onClick={handleRedeemPoints}
+                className="px-4 py-2 bg-slate-950 text-amber-300 font-bold text-xs rounded-xl hover:bg-slate-800 transition-colors"
+              >
+                Redeem 100 Points
+              </button>
+            </div>
+
+            {/* Active Promo Coupons */}
+            {offers.length > 0 && (
+              <div className="bg-white rounded-2xl p-5 border border-slate-200 space-y-3">
+                <h3 className="font-extrabold text-slate-900 text-base flex items-center space-x-2">
+                  <Tag className="w-4 h-4 text-emerald-600" />
+                  <span>Available Coupons</span>
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {offers.map((offer, idx) => (
+                    <div key={idx} className="bg-slate-50 p-3.5 rounded-xl border border-dashed border-emerald-400 flex items-center justify-between">
+                      <div>
+                        <span className="font-black text-emerald-700 text-xs bg-emerald-100 px-2 py-0.5 rounded">{offer.code}</span>
+                        <p className="text-xs text-slate-600 mt-1">{offer.desc}</p>
+                      </div>
+                      <button
+                        onClick={() => {
+                          navigator.clipboard.writeText(offer.code);
+                          alert(`Copied code "${offer.code}" to clipboard!`);
+                        }}
+                        className="text-xs font-bold text-emerald-600 hover:underline"
+                      >
+                        Copy
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Profile Info */}
             <div className="bg-white rounded-2xl p-5 border border-slate-200 space-y-4">
               <div className="flex items-center justify-between">
@@ -894,95 +894,6 @@ export default function CustomerDashboard() {
           </div>
         )}
 
-        {/* ========================================= */}
-        {/* TAB 5: REWARDS & HELP */}
-        {/* ========================================= */}
-        {activeTab === 'help' && (
-          <div className="space-y-6">
-            {/* Rewards Banner */}
-            <div className="bg-amber-400 rounded-2xl p-5 text-slate-950 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
-              <div>
-                <p className="font-black text-xs uppercase tracking-wider text-slate-800">SmartRewards</p>
-                <h3 className="font-black text-xl">{loyaltyPoints} SmartPoints</h3>
-                <p className="text-xs font-medium text-slate-800">100 points = $1 discount voucher.</p>
-              </div>
-              <button
-                onClick={handleRedeemPoints}
-                className="px-4 py-2 bg-slate-950 text-amber-300 font-bold text-xs rounded-xl hover:bg-slate-800"
-              >
-                Redeem 100 Points
-              </button>
-            </div>
-
-            {/* Promo Codes */}
-            {offers.length > 0 && (
-              <div className="space-y-2">
-                <h3 className="font-bold text-slate-900 text-sm">Active Coupons</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {offers.map((offer, idx) => (
-                    <div key={idx} className="bg-white p-3.5 rounded-xl border border-dashed border-emerald-400 flex items-center justify-between">
-                      <div>
-                        <span className="font-black text-emerald-700 text-xs bg-emerald-50 px-2 py-0.5 rounded">{offer.code}</span>
-                        <p className="text-xs text-slate-600 mt-1">{offer.desc}</p>
-                      </div>
-                      <button
-                        onClick={() => {
-                          navigator.clipboard.writeText(offer.code);
-                          alert(`Copied ${offer.code}`);
-                        }}
-                        className="text-xs font-bold text-emerald-600 hover:underline"
-                      >
-                        Copy
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Help Ticket */}
-            <div className="bg-white rounded-2xl p-5 border border-slate-200 space-y-3">
-              <h3 className="font-extrabold text-slate-900 text-base">Contact Support</h3>
-              <form onSubmit={handleCreateTicket} className="space-y-3 max-w-lg">
-                <input
-                  type="text"
-                  placeholder="Subject or issue"
-                  value={newTicket.topic}
-                  onChange={(e) => setNewTicket({ ...newTicket, topic: e.target.value })}
-                  className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold"
-                  required
-                />
-                <textarea
-                  rows={3}
-                  placeholder="How can our operations team help?"
-                  value={newTicket.details}
-                  onChange={(e) => setNewTicket({ ...newTicket, details: e.target.value })}
-                  className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold"
-                  required
-                />
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-[#1E8C45] hover:bg-emerald-600 text-white font-bold text-xs rounded-xl"
-                >
-                  Send Ticket
-                </button>
-              </form>
-
-              {supportTickets.length > 0 && (
-                <div className="pt-3 border-t border-slate-100 space-y-2">
-                  <p className="text-xs font-bold text-slate-700">Past Tickets</p>
-                  {supportTickets.map((tck) => (
-                    <div key={tck.id} className="p-2.5 bg-slate-50 rounded-lg text-xs flex justify-between">
-                      <span className="font-medium text-slate-800">{tck.topic}</span>
-                      <span className="font-bold text-[10px] bg-slate-200 px-2 py-0.5 rounded">{tck.status}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
       </div>
 
       {/* --- RECEIPT MODAL --- */}
@@ -1040,39 +951,6 @@ export default function CustomerDashboard() {
             />
             <button type="submit" className="w-full py-2 bg-[#1E8C45] text-white font-bold text-xs rounded-xl">
               Submit Review (+25 Points)
-            </button>
-          </form>
-        </div>
-      )}
-
-      {/* --- REPORT ISSUE MODAL --- */}
-      {selectedOrderForComplaint && (
-        <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
-          <form onSubmit={handleSubmitComplaint} className="bg-white rounded-2xl max-w-sm w-full p-5 space-y-3 shadow-xl">
-            <div className="flex justify-between items-center border-b pb-2">
-              <h3 className="font-black text-slate-900 text-base">Report Issue</h3>
-              <button type="button" onClick={() => setSelectedOrderForComplaint(null)}><X className="w-4 h-4 text-slate-400" /></button>
-            </div>
-            <select
-              value={complaintForm.reason}
-              onChange={(e) => setComplaintForm({ ...complaintForm, reason: e.target.value })}
-              className="w-full p-2 bg-slate-50 border rounded-lg text-xs"
-            >
-              <option value="Missing item">Missing item</option>
-              <option value="Damaged package">Damaged package</option>
-              <option value="Late delivery">Late delivery</option>
-              <option value="Wrong food">Wrong food delivered</option>
-            </select>
-            <textarea
-              placeholder="Describe the issue..."
-              value={complaintForm.details}
-              onChange={(e) => setComplaintForm({ ...complaintForm, details: e.target.value })}
-              className="w-full p-2 bg-slate-50 border rounded-lg text-xs"
-              rows={2}
-              required
-            />
-            <button type="submit" className="w-full py-2 bg-rose-600 text-white font-bold text-xs rounded-xl">
-              Submit Report
             </button>
           </form>
         </div>

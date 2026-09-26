@@ -10,7 +10,6 @@ import OrderSuccessModal from './components/OrderSuccessModal';
 import ChapaPaymentModal from './components/ChapaPaymentModal';
 import OrderTrackerModal from './components/OrderTrackerModal';
 import VendorDashboardModal from './components/VendorDashboardModal';
-import AIAssistantModal from './components/AIAssistantModal';
 import AdminSuperpanelModal from './components/AdminSuperpanelModal';
 import api from './lib/api';
 import {
@@ -22,7 +21,6 @@ import {
   Users,
   Store,
   Bike,
-  Bot,
   Headphones,
   Award,
   ShieldCheck,
@@ -41,8 +39,8 @@ function Dashboard() {
   const [activePaymentOrder, setActivePaymentOrder] = useState(null);
   const [trackedOrderId, setTrackedOrderId] = useState(null);
   const [vendorModalOpen, setVendorModalOpen] = useState(false);
-  const [aiModalOpen, setAiModalOpen] = useState(false);
   const [adminModalOpen, setAdminModalOpen] = useState(false);
+
 
   useEffect(() => {
     const checkSystemHealth = async () => {
@@ -66,7 +64,6 @@ function Dashboard() {
       {/* Navbar */}
       <Navbar 
         onOpenVendorPortal={() => setVendorModalOpen(true)}
-        onOpenAI={() => setAiModalOpen(true)}
         onOpenAdmin={() => setAdminModalOpen(true)}
         onOpenTrack={() => {
           if (lastPlacedOrder?.id) {
@@ -120,29 +117,10 @@ function Dashboard() {
         isOpen={vendorModalOpen}
         onClose={() => setVendorModalOpen(false)}
       />
-      <AIAssistantModal
-        isOpen={aiModalOpen}
-        onClose={() => setAiModalOpen(false)}
-      />
       <AdminSuperpanelModal
         isOpen={adminModalOpen}
         onClose={() => setAdminModalOpen(false)}
       />
-
-      {/* Floating AI Support Bubble */}
-      <button
-        onClick={() => setAiModalOpen(true)}
-        className="fixed bottom-6 right-6 z-40 px-5 py-3.5 rounded-full bg-[#F5B820] hover:bg-[#E5A910] text-gray-950 font-black text-xs shadow-xl shadow-[#F5B820]/30 flex items-center space-x-2.5 hover:scale-105 active:scale-95 transition-all cursor-pointer border border-[#E5A910] animate-glow"
-      >
-        <div className="w-6 h-6 rounded-full bg-[#1E8C45] flex items-center justify-center text-white">
-          <Bot className="w-3.5 h-3.5" />
-        </div>
-        <span className="font-extrabold tracking-wide">Ask AI Support</span>
-        <span className="flex h-2.5 w-2.5 relative">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#1E8C45] opacity-75"></span>
-          <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#1E8C45]"></span>
-        </span>
-      </button>
 
       {/* HERO SECTION */}
       <div className="w-full bg-white pt-6 sm:pt-10 pb-16 lg:pb-24 border-b border-gray-100 relative overflow-hidden">
@@ -177,16 +155,9 @@ function Dashboard() {
                   <span>{t('btn.order')}</span>
                   <ArrowRight className="w-4 h-4 ml-1" />
                 </a>
-
-                <button
-                  onClick={() => setAiModalOpen(true)}
-                  className="px-6 py-4 rounded-full bg-white hover:bg-[#FFF8E1] border border-[#F5B820]/40 text-gray-800 font-bold text-sm shadow-sm transition-all flex items-center space-x-2 cursor-pointer"
-                >
-                  <Bot className="w-4 h-4 text-[#1E8C45]" />
-                  <span>Ask Assistant</span>
-                </button>
               </div>
             </div>
+
 
             {/* Right Column: Delivery Truck SVG matching logo */}
             <div className="lg:col-span-6 relative flex items-center justify-center animate-fade-in-up stagger-2">

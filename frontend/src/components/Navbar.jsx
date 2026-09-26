@@ -4,7 +4,6 @@ import { useCart } from '../context/CartContext';
 import { 
   ShoppingBag, 
   MapPin, 
-  Bot, 
   User, 
   LogOut, 
   Store, 
@@ -17,7 +16,8 @@ import {
 } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 
-export default function Navbar({ onOpenTrack, onOpenVendorPortal, onOpenAI, onOpenAdmin }) {
+export default function Navbar({ onOpenTrack, onOpenVendorPortal, onOpenAdmin }) {
+
   const { user, logout, openLogin, openRegister } = useAuth();
   const { itemsCount, openCart } = useCart();
   const { lang, toggleLanguage, t } = useLanguage();
@@ -83,14 +83,8 @@ export default function Navbar({ onOpenTrack, onOpenVendorPortal, onOpenAI, onOp
               <MapPin className="w-4 h-4 mr-1.5 text-[#F5B820]" />
               Track Order
             </button>
-            <button
-              onClick={onOpenAI}
-              className="px-3.5 py-2 rounded-full text-sm font-semibold text-gray-700 hover:text-gray-950 hover:bg-[#E8F5E9] transition-all flex items-center cursor-pointer"
-            >
-              <Bot className="w-4 h-4 mr-1.5 text-[#1E8C45]" />
-              AI Support
-            </button>
           </nav>
+
 
           {/* User Area */}
           <div className="hidden md:flex items-center space-x-3">
@@ -274,15 +268,7 @@ export default function Navbar({ onOpenTrack, onOpenVendorPortal, onOpenAI, onOp
           >
             Track Order
           </button>
-          <button
-            onClick={() => {
-              setMobileMenuOpen(false);
-              onOpenAI();
-            }}
-            className="w-full text-left block px-3 py-2 rounded-xl text-base font-semibold text-gray-800 hover:bg-[#E8F5E9] cursor-pointer"
-          >
-            AI Support Assistant
-          </button>
+
 
           {/* Role-specific dashboard link for mobile */}
           {user && user.role === 'CUSTOMER' && (
