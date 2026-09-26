@@ -237,3 +237,61 @@ exports.getOrderById = async (req, res, next) => {
     next(error);
   }
 };
+
+/**
+ * PATCH /api/v1/orders/:id/cancel
+ * Cancel an order if it is in PENDING or PAID status
+ */
+exports.cancelOrder = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.id;
+    const userRole = req.user.role;
+
+    const order = await prisma.order.findUnique({
+      where: { id },
+      include: { vendor: true },
+    });
+
+    if (!order) {
+      return res.status(404).json({ success: false, error: 'Order not found' });
+    }
+
+    if (order.customerId !== userId && userRole !== 'ADMIN') {
+      return res.status(403).json({ success: false, error: 'Access denied to cancel this order' });
+    }
+
+    if (order.status === 'DELIVERED') {
+      return res.status(400).json({ success: false, error: 'Cannot cancel an order that has already been delivered' });
+    }
+
+    if (order.status === 'CANCELLED') {
+      return res.status(400).json({ success: false, error: 'Order is already cancelled' });
+    }
+
+    const updatedOrder = await prisma.order.update({
+      where: { id },
+      data: { status: 'CANCELLED' },
+      include: {
+        vendor: { select: { id: true, name: true } },
+        items: true,
+      },
+    });
+
+    // Notify via Socket.io if connected
+    const io = req.app.get('io');
+    if (io) {
+      io.to(`order_${id}`).emit('order:status', { orderId: id, status: 'CANCELLED' });
+      io.to(`vendor_${order.vendorId}`).emit('order:cancelled', { orderId: id });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Order cancelled successfully',
+      order: updatedOrder,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+

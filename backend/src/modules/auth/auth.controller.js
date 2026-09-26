@@ -236,8 +236,131 @@ const getMe = async (req, res) => {
   }
 };
 
+/**
+ * Update authenticated user profile
+ * PUT /api/v1/auth/profile
+ */
+const updateProfile = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { name, phone } = req.body;
+
+    if (!name || !name.trim()) {
+      return res.status(400).json({ error: 'Name is required' });
+    }
+
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: {
+        name: name.trim(),
+        phone: phone ? phone.trim() : null,
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        phone: true,
+        createdAt: true,
+      },
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Profile updated successfully',
+      user: updatedUser,
+    });
+  } catch (error) {
+    console.error('Update profile error:', error);
+    return res.status(500).json({ error: 'Failed to update profile' });
+  }
+};
+
+/**
+ * Change authenticated user password
+ * POST /api/v1/auth/change-password
+ */
+const changePassword = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { currentPassword, newPassword } = req.body;
+
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ error: 'Current password and new password are required' });
+    }
+
+    if (newPassword.length < 6) {
+      return res.status(400).json({ error: 'New password must be at least 6 characters' });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ error: 'Incorrect current password' });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await prisma.user.update({
+      where: { id: userId },
+      data: { password: hashedPassword },
+    });
+
+    // Record audit log
+    await prisma.authAuditLog.create({
+      data: {
+        userId: user.id,
+        email: user.email,
+        event: 'PASSWORD_RESET',
+        ipAddress: req.ip || null,
+        userAgent: req.headers['user-agent'] || null,
+      },
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Password changed successfully',
+    });
+  } catch (error) {
+    console.error('Change password error:', error);
+    return res.status(500).json({ error: 'Failed to change password' });
+  }
+};
+
+/**
+ * Deactivate user account
+ * POST /api/v1/auth/deactivate
+ */
+const deactivateAccount = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    await prisma.user.update({
+      where: { id: userId },
+      data: { isActive: false },
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Account deactivated successfully',
+    });
+  } catch (error) {
+    console.error('Deactivate account error:', error);
+    return res.status(500).json({ error: 'Failed to deactivate account' });
+  }
+};
+
 module.exports = {
   register,
   login,
   getMe,
+  updateProfile,
+  changePassword,
+  deactivateAccount,
 };
