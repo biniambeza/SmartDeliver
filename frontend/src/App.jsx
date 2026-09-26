@@ -17,7 +17,6 @@ import {
   Server,
   Database,
   ArrowRight,
-  Sparkles,
   Users,
   Store,
   Bike,

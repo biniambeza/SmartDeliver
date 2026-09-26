@@ -23,27 +23,6 @@ async function testSlice7() {
     const token = loginRes.data.token || loginRes.data.accessToken;
     console.log('✅ Customer Authenticated.');
 
-    // 2. Test AI Support Assistant (POST /api/v1/ai/chat)
-    console.log('\n2️⃣ Testing AI Support Assistant (General Inquiry)...');
-    const aiRes1 = await axios.post(
-      `${API_URL}/ai/chat`,
-      { message: 'What stores are open in Addis Ababa and how does escrow work?' },
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
-    console.log(`✅ AI Reply 1 Received:`);
-    console.log(`"${aiRes1.data.reply.slice(0, 180)}..."`);
-    if (!aiRes1.data.reply || aiRes1.data.reply.length < 10) {
-      throw new Error('Assertion failed: AI reply is empty or too short');
-    }
-
-    console.log('\n3️⃣ Testing AI Support Assistant (Order-Tracking Grounding)...');
-    const aiRes2 = await axios.post(
-      `${API_URL}/ai/chat`,
-      { message: 'Where is my order?' },
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
-    console.log(`✅ AI Reply 2 Received (Order Status):`);
-    console.log(`"${aiRes2.data.reply.slice(0, 180)}..."`);
 
     // 4. Test Admin Mission Control Overview (GET /api/v1/admin/overview)
     console.log('\n4️⃣ Testing Admin Superpanel Overview (/api/v1/admin/overview)...');

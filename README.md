@@ -111,7 +111,6 @@ flowchart TB
 
     subgraph ExternalIntegrations ["Third-Party External Services"]
         ChapaAPI["Chapa Payment Gateway"]
-        GeminiAPI["Gemini AI LLM API"]
         Cloudinary["Cloudinary / MinIO Media"]
         SMTPService["SMTP / Resend Email"]
     end
@@ -135,7 +134,6 @@ flowchart TB
 
     %% External Connections
     PayMod <-->|Verify Charges| ChapaAPI
-    AIMod <-->|Contextual Inference| GeminiAPI
     VendorMod -->|CDN Assets| Cloudinary
     BullMQWorker -->|Dispatch OTP & Alerts| SMTPService
 ```
@@ -247,7 +245,6 @@ backend/src/modules/
 | **Real-Time** | Socket.io | Bi-directional communication with automated fallback and Redis pub/sub adapter support. |
 | **Authentication** | JWT (Dual Token) + bcrypt | Stateless access tokens with rotating refresh tokens and bcrypt password salting. |
 | **Payment Gateway** | Chapa API | Premier East-African payment gateway supporting local mobile money and cards. |
-| **AI Engine** | Google Gemini (Free Tier) | Cost-effective contextual NLP customer support integration. |
 | **Media Storage** | Cloudinary / MinIO | Scalable CDN media distribution and thumbnail transformation. |
 | **Transactional Email**| Nodemailer (Gmail / Resend) | Free-tier transactional email delivery for OTP codes and password resets. |
 | **Containerization**| Docker & Docker Compose | Guaranteed dev/prod environment parity and one-command orchestration. |
@@ -408,23 +405,6 @@ flowchart LR
 
 ---
 
-## 11. AI Support Engine
-
-SmartDeliver incorporates an automated support engine powered by the Google Gemini free-tier API. 
-
-```
-                                Context Injection Engine
-                               ┌─────────────────────────┐
-Customer Query:                │ Active Order Status     │
-"Where is my burger?" ───►     │ Courier Distance & ETA  │ ───► Prompt ───► Gemini API
-                               │ Vendor Kitchen Time     │
-                               └─────────────────────────┘
-```
-
-- **Live Context Injection:** Prompts are dynamically enriched with active order metadata, enabling precise responses (e.g., *"Your order from BurgerTown was picked up 4 minutes ago and is 1.2 km away"*).
-- **Abuse Prevention:** Rate-limited to 20 inquiries per hour per customer via Redis token buckets.
-- **Privacy Assurance:** Raw conversation transcripts are kept ephemeral; only token usage and latency metrics are persisted in `ai_requests`.
-
 ---
 
 ## 12. Order & Payment Lifecycle Workflow
@@ -465,8 +445,6 @@ stateDiagram-v2
 - **Resilient Background Processing with BullMQ:**
   - Webhook reconciliation and email dispatches are queued asynchronously.
   - Failed operations retry up to 5 times with exponential backoff before routing to the Dead-Letter Queue (DLQ).
-- **Circuit Breakers & Fallbacks:**
-  - If the Gemini API experiences upstream throttling, the UI seamlessly transitions to an automated fallback message providing phone support contacts without breaking the application interface.
 
 ---
 
@@ -540,10 +518,9 @@ All endpoints are prefixed with `/api/v1`. Protected routes require an `Authoriz
 | `PATCH`| `/deliveries/:id/location` | `RIDER` | Broadcast current GPS latitude/longitude. |
 | `PATCH`| `/deliveries/:id/status` | `RIDER` | Update delivery milestone (`picked_up`, `delivered`).|
 
-### AI & Operations
+### Operations & Administration
 | Method | Endpoint | Access | Description |
 | :--- | :--- | :--- | :--- |
-| `POST` | `/ai/support` | `CUSTOMER` | Interactive support chat with contextual injection. |
 | `GET` | `/admin/analytics` | `ADMIN` | Platform KPIs (revenue, active stores, orders/day). |
 | `GET` | `/admin/audit-logs` | `ADMIN` | Query immutable audit logs. |
 | `GET` | `/admin/export/csv` | `ADMIN` | Generate CSV export of platform transaction ledgers. |
@@ -645,9 +622,6 @@ JWT_REFRESH_SECRET="your-ultra-secure-refresh-jwt-secret-min-32-chars"
 CHAPA_SECRET_KEY="CHASECK_TEST-xxxxxxxxxxxxxxxxxxxx"
 CHAPA_WEBHOOK_SECRET="your-chapa-webhook-secret-token"
 
-# AI Integration
-GEMINI_API_KEY="AIzaSyYourGeminiApiKeyHere"
-
 # Media Storage (Cloudinary)
 CLOUDINARY_CLOUD_NAME="your-cloud-name"
 CLOUDINARY_API_KEY="your-api-key"
@@ -703,7 +677,6 @@ GET /health
 
 ### Current Limitations
 - **Single Host Default:** Local dev runs a single node instance; multi-node clusters require enabling the Redis Socket.io adapter.
-- **AI Rate Quotas:** Context length and request frequencies are capped by Google Gemini free-tier parameters.
 - **Immediate Invalidation:** JWT access tokens remain cryptographically valid until the 15-minute expiration period expires unless specifically blacklisted in Redis.
 
 ### Strategic Roadmap

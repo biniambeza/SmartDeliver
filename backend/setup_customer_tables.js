@@ -41,18 +41,6 @@ async function setupTables() {
   `;
 
   await prisma.$executeRaw`
-    CREATE TABLE IF NOT EXISTS support_tickets (
-      id VARCHAR(255) PRIMARY KEY,
-      user_id VARCHAR(255) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-      order_id VARCHAR(255),
-      topic VARCHAR(255) NOT NULL,
-      details TEXT NOT NULL,
-      status VARCHAR(50) DEFAULT 'OPEN',
-      created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-    );
-  `;
-
-  await prisma.$executeRaw`
     CREATE TABLE IF NOT EXISTS customer_loyalty (
       user_id VARCHAR(255) PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
       points INTEGER DEFAULT 250,
