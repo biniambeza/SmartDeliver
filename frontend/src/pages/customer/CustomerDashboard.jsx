@@ -9,7 +9,7 @@ import OrderTrackerModal from '../../components/OrderTrackerModal';
 import VendorMenuModal from '../../components/VendorMenuModal';
 import { 
   ShoppingBag, MapPin, Clock, Star, User, CreditCard, Tag, 
-  RefreshCw, FileText, Phone, Plus, Trash2, Edit3, X, ArrowRight, 
+  RefreshCw, Phone, Plus, Trash2, Edit3, X, ArrowRight, 
   Search, Store, Loader2, CheckCircle2, AlertCircle
 } from 'lucide-react';
 

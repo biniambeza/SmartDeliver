@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { MapPin, PackageCheck, Bike, Clock, CheckCircle2, ChevronRight, Navigation, FileCheck, Power, Camera } from 'lucide-react';
+import { MapPin, PackageCheck, Bike, Clock, CheckCircle2, ChevronRight, Navigation, Power } from 'lucide-react';
 
 export default function RiderDashboard() {
   const { user } = useAuth();
-  const [activeTab, setActiveTab] = useState('orders'); // orders, earnings, verification
+  const [activeTab, setActiveTab] = useState('orders'); // orders, earnings
   const [isOnline, setIsOnline] = useState(false);
   const [activeOrder, setActiveOrder] = useState(null);
   
@@ -63,12 +63,6 @@ export default function RiderDashboard() {
             className={`flex-1 py-3 px-4 rounded-lg font-bold text-sm whitespace-nowrap transition-colors ${activeTab === 'earnings' ? 'bg-[#F5B820] text-gray-900' : 'text-gray-500 hover:bg-gray-50'}`}
           >
             Earnings & History
-          </button>
-          <button 
-            onClick={() => setActiveTab('verification')}
-            className={`flex-1 py-3 px-4 rounded-lg font-bold text-sm whitespace-nowrap transition-colors ${activeTab === 'verification' ? 'bg-[#F5B820] text-gray-900' : 'text-gray-500 hover:bg-gray-50'}`}
-          >
-            Document Upload
           </button>
         </div>
 
@@ -197,35 +191,6 @@ export default function RiderDashboard() {
                 </div>
               ))}
             </div>
-          </div>
-        )}
-
-        {/* Tab Content: Verification */}
-        {activeTab === 'verification' && (
-          <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8">
-            <div className="flex items-center space-x-4 mb-6">
-              <div className="w-12 h-12 bg-yellow-50 rounded-full flex items-center justify-center text-[#F5B820]">
-                <FileCheck className="w-6 h-6" />
-              </div>
-              <div>
-                <h2 className="text-2xl font-bold text-gray-900">Document Verification</h2>
-                <p className="text-gray-500">Upload your ID and vehicle documents to stay active.</p>
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              {['Government ID / Driver\'s License', 'Vehicle Registration', 'Proof of Insurance'].map((doc, idx) => (
-                <div key={idx} className="border-2 border-dashed border-gray-200 rounded-xl p-6 text-center hover:border-[#1E8C45] transition-colors cursor-pointer bg-gray-50">
-                  <Camera className="w-8 h-8 text-gray-400 mx-auto mb-3" />
-                  <p className="font-bold text-gray-700">{doc}</p>
-                  <p className="text-xs text-gray-500 mt-1">Tap to upload photo or PDF</p>
-                </div>
-              ))}
-            </div>
-            
-            <button className="w-full mt-6 py-4 bg-gray-900 text-white font-black rounded-xl shadow-sm hover:bg-gray-800 transition-colors">
-              Submit Documents for Review
-            </button>
           </div>
         )}
 
