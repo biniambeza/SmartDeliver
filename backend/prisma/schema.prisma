@@ -16,6 +16,8 @@ enum Role {
   CUSTOMER
   VENDOR
   RIDER
+  DISPATCHER
+  SUPPORT
   ADMIN
 }
 

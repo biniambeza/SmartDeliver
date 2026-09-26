@@ -29,14 +29,28 @@ export default function AuthModal() {
     setIsSubmitting(true);
 
     try {
+      let loggedInUser;
       if (authModalTab === 'login') {
-        await login(email, password);
+        loggedInUser = await login(email, password);
       } else {
-        await register({ name, email, password, role, phone });
+        loggedInUser = await register({ name, email, password, role, phone });
       }
       setName('');
       setEmail('');
       setPassword('');
+      
+      // Auto-redirect to the user's role dashboard
+      if (loggedInUser) {
+        const roleRoutes = {
+          ADMIN: '/admin',
+          VENDOR: '/vendor',
+          RIDER: '/rider',
+          DISPATCHER: '/dispatcher',
+          SUPPORT: '/support',
+          CUSTOMER: '/customer',
+        };
+        window.location.href = roleRoutes[loggedInUser.role] || '/customer';
+      }
     } catch (err) {
       console.error(err);
       let errorMsg = 'An unexpected error occurred. Please try again.';
