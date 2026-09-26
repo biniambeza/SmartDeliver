@@ -358,3 +358,82 @@ exports.updateProduct = async (req, res, next) => {
     next(error);
   }
 };
+
+/**
+ * POST /api/v1/vendors
+ * Create a new vendor profile
+ */
+exports.createVendor = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+    const { name, slug, description, category, address, logoUrl, bannerUrl } = req.body;
+
+    if (!name || !slug || !category) {
+      return res.status(400).json({ success: false, error: 'Name, slug, and category are required' });
+    }
+
+    // Check if user already has a vendor
+    const existing = await prisma.vendor.findUnique({ where: { userId } });
+    if (existing) {
+      return res.status(400).json({ success: false, error: 'User already has a vendor profile' });
+    }
+
+    // Check slug uniqueness
+    const slugExists = await prisma.vendor.findUnique({ where: { slug } });
+    if (slugExists) {
+      return res.status(400).json({ success: false, error: 'Store URL (slug) is already taken' });
+    }
+
+    const vendor = await prisma.vendor.create({
+      data: {
+        userId,
+        name,
+        slug,
+        description,
+        category,
+        address,
+        logoUrl,
+        bannerUrl,
+      }
+    });
+
+    res.status(201).json({ success: true, vendor });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * POST /api/v1/vendors/products
+ * Create a new product for a vendor
+ */
+exports.createProduct = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+    const { name, description, price, category, imageUrl } = req.body;
+
+    if (!name || !price) {
+      return res.status(400).json({ success: false, error: 'Name and price are required' });
+    }
+
+    const vendor = await prisma.vendor.findUnique({ where: { userId } });
+    if (!vendor) {
+      return res.status(403).json({ success: false, error: 'You must create a vendor profile first' });
+    }
+
+    const product = await prisma.product.create({
+      data: {
+        vendorId: vendor.id,
+        name,
+        description,
+        price: parseFloat(price),
+        category,
+        imageUrl,
+      }
+    });
+
+    res.status(201).json({ success: true, product });
+  } catch (error) {
+    next(error);
+  }
+};
