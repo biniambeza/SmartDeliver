@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { 
   LogOut, User, Store, Bike, ShieldCheck, Menu, X, Globe, 
-  ShoppingBag, MapPin, Headphones, Radio, Package, TrendingUp,
+  ShoppingBag, MapPin, Package, TrendingUp,
   FileCheck, Clock, Settings, Home
 } from 'lucide-react';
-import { useLanguage } from '../contexts/LanguageContext';
+import { useLanguage } from '../context/LanguageContext';
 
 // Role-specific navigation configs
 const roleNavConfig = {
@@ -31,20 +31,6 @@ const roleNavConfig = {
       { href: '/rider', label: 'Dashboard', icon: Home },
     ],
   },
-  DISPATCHER: {
-    brand: 'Operations Center',
-    color: 'text-purple-600',
-    links: [
-      { href: '/dispatcher', label: 'Dashboard', icon: Home },
-    ],
-  },
-  SUPPORT: {
-    brand: 'Support Center',
-    color: 'text-blue-600',
-    links: [
-      { href: '/support', label: 'Dashboard', icon: Home },
-    ],
-  },
   ADMIN: {
     brand: 'Admin Superpanel',
     color: 'text-red-600',
@@ -52,8 +38,6 @@ const roleNavConfig = {
       { href: '/admin', label: 'Superpanel', icon: ShieldCheck },
       { href: '/vendor', label: 'Vendor View', icon: Store },
       { href: '/rider', label: 'Rider View', icon: Bike },
-      { href: '/dispatcher', label: 'Dispatch View', icon: Radio },
-      { href: '/support', label: 'Support View', icon: Headphones },
     ],
   },
 };

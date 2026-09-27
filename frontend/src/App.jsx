@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useLanguage } from './contexts/LanguageContext';
+import { useLanguage } from './context/LanguageContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { CartProvider, useCart } from './context/CartContext';
 import Navbar from './components/Navbar';
@@ -427,9 +427,8 @@ import VendorDashboardPage from './pages/vendor/VendorDashboard';
 import AdminDashboardPage from './pages/admin/AdminDashboard';
 import RiderDashboardPage from './pages/rider/RiderDashboard';
 import CustomerDashboardPage from './pages/customer/CustomerDashboard';
-import DispatcherDashboardPage from './pages/dispatcher/DispatcherDashboard';
-import SupportDashboardPage from './pages/support/SupportDashboard';
-import { LanguageProvider } from './contexts/LanguageContext';
+import { LanguageProvider } from './context/LanguageContext';
+import { SocketProvider } from './context/SocketContext';
 
 // Auto-redirect component — sends logged-in users to their role dashboard
 function RoleRedirect() {
@@ -441,8 +440,6 @@ function RoleRedirect() {
     case 'ADMIN': return <Navigate to="/admin" replace />;
     case 'VENDOR': return <Navigate to="/vendor" replace />;
     case 'RIDER': return <Navigate to="/rider" replace />;
-    case 'DISPATCHER': return <Navigate to="/dispatcher" replace />;
-    case 'SUPPORT': return <Navigate to="/support" replace />;
     default: return <Navigate to="/customer" replace />;
   }
 }
@@ -451,48 +448,40 @@ export default function App() {
   return (
     <LanguageProvider>
       <AuthProvider>
-        <CartProvider>
-          <Router>
-            <Routes>
-              {/* Public homepage — auto-redirects logged-in users to their dashboard */}
-              <Route path="/" element={<RoleRedirect />} />
+        <SocketProvider>
+          <CartProvider>
+            <Router>
+              <Routes>
+                {/* Public homepage — auto-redirects logged-in users to their dashboard */}
+                <Route path="/" element={<RoleRedirect />} />
 
-              {/* All role dashboards use RoleLayout (role-specific navbar) */}
-              <Route element={<RoleLayout />}>
-                {/* Customer */}
-                <Route element={<RequireRole allowedRoles={['CUSTOMER', 'ADMIN']} />}>
-                  <Route path="/customer" element={<CustomerDashboardPage />} />
+                {/* All role dashboards use RoleLayout (role-specific navbar) */}
+                <Route element={<RoleLayout />}>
+                  {/* Customer */}
+                  <Route element={<RequireRole allowedRoles={['CUSTOMER', 'ADMIN']} />}>
+                    <Route path="/customer" element={<CustomerDashboardPage />} />
+                  </Route>
+
+                  {/* Vendor */}
+                  <Route element={<RequireRole allowedRoles={['VENDOR', 'ADMIN']} />}>
+                    <Route path="/vendor" element={<VendorDashboardPage />} />
+                  </Route>
+
+                  {/* Rider */}
+                  <Route element={<RequireRole allowedRoles={['RIDER', 'ADMIN']} />}>
+                    <Route path="/rider" element={<RiderDashboardPage />} />
+                  </Route>
+
+                  {/* Admin */}
+                  <Route element={<RequireRole allowedRoles={['ADMIN']} />}>
+                    <Route path="/admin" element={<AdminDashboardPage />} />
+                  </Route>
                 </Route>
 
-                {/* Vendor */}
-                <Route element={<RequireRole allowedRoles={['VENDOR', 'ADMIN']} />}>
-                  <Route path="/vendor" element={<VendorDashboardPage />} />
-                </Route>
-
-                {/* Rider */}
-                <Route element={<RequireRole allowedRoles={['RIDER', 'ADMIN']} />}>
-                  <Route path="/rider" element={<RiderDashboardPage />} />
-                </Route>
-
-                {/* Dispatcher */}
-                <Route element={<RequireRole allowedRoles={['DISPATCHER', 'ADMIN']} />}>
-                  <Route path="/dispatcher" element={<DispatcherDashboardPage />} />
-                </Route>
-
-                {/* Support */}
-                <Route element={<RequireRole allowedRoles={['SUPPORT', 'ADMIN']} />}>
-                  <Route path="/support" element={<SupportDashboardPage />} />
-                </Route>
-
-                {/* Admin */}
-                <Route element={<RequireRole allowedRoles={['ADMIN']} />}>
-                  <Route path="/admin" element={<AdminDashboardPage />} />
-                </Route>
-              </Route>
-
-            </Routes>
-          </Router>
-        </CartProvider>
+              </Routes>
+            </Router>
+          </CartProvider>
+        </SocketProvider>
       </AuthProvider>
     </LanguageProvider>
   );

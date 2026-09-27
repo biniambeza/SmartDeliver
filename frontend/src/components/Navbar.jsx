@@ -14,7 +14,7 @@ import {
   ChevronDown,
   Globe
 } from 'lucide-react';
-import { useLanguage } from '../contexts/LanguageContext';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function Navbar({ onOpenTrack, onOpenVendorPortal, onOpenAdmin }) {
 

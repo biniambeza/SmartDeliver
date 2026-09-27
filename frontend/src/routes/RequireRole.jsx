@@ -19,10 +19,6 @@ export default function RequireRole({ allowedRoles }) {
         return <Navigate to="/vendor" replace />;
       case 'RIDER':
         return <Navigate to="/rider" replace />;
-      case 'DISPATCHER':
-        return <Navigate to="/dispatcher" replace />;
-      case 'SUPPORT':
-        return <Navigate to="/support" replace />;
       default:
         return <Navigate to="/customer" replace />;
     }
