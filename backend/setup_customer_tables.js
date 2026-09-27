@@ -48,6 +48,42 @@ async function setupTables() {
     );
   `;
 
+  await prisma.$executeRaw`
+    CREATE TABLE IF NOT EXISTS support_tickets (
+      id VARCHAR(255) PRIMARY KEY,
+      user_id VARCHAR(255) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      order_id VARCHAR(255) REFERENCES orders(id) ON DELETE SET NULL,
+      topic VARCHAR(255) NOT NULL,
+      details TEXT NOT NULL,
+      status VARCHAR(50) DEFAULT 'OPEN',
+      created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    );
+  `;
+
+  await prisma.$executeRaw`
+    CREATE TABLE IF NOT EXISTS ai_requests (
+      id VARCHAR(255) PRIMARY KEY,
+      "userId" VARCHAR(255) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      "orderId" VARCHAR(255),
+      message TEXT NOT NULL,
+      response TEXT NOT NULL,
+      "tokensUsed" INTEGER DEFAULT 0,
+      "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    );
+  `;
+
+  await prisma.$executeRaw`
+    CREATE TABLE IF NOT EXISTS payout_records (
+      id VARCHAR(255) PRIMARY KEY,
+      "orderId" VARCHAR(255) NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
+      "vendorId" VARCHAR(255) NOT NULL REFERENCES vendors(id) ON DELETE CASCADE,
+      amount DECIMAL(10, 2) NOT NULL,
+      status VARCHAR(50) DEFAULT 'PENDING',
+      "processedAt" TIMESTAMP WITH TIME ZONE,
+      "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    );
+  `;
+
   console.log('Customer tables setup successfully!');
 }
 

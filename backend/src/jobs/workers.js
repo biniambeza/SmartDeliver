@@ -7,13 +7,17 @@ let emailQueue = null;
 let payoutQueue = null;
 
 const queueConnection = redis
-  ? { connection: redis.duplicate() }
+  ? { connection: redis.duplicate({ maxRetriesPerRequest: null }) }
   : null;
 
 if (queueConnection) {
-  emailQueue = new Queue('email', queueConnection);
-  payoutQueue = new Queue('payout', queueConnection);
-  console.log('📬 BullMQ: Email and Payout queues initialized');
+  try {
+    emailQueue = new Queue('email', queueConnection);
+    payoutQueue = new Queue('payout', queueConnection);
+    console.log('📬 BullMQ: Email and Payout queues initialized');
+  } catch (err) {
+    console.warn('⚠️ BullMQ queue initialization error:', err.message);
+  }
 }
 
 // ─── Email Worker ────────────────────────────────────────────
@@ -24,9 +28,10 @@ function startEmailWorker() {
     return null;
   }
 
-  const worker = new Worker(
-    'email',
-    async (job) => {
+  try {
+    const worker = new Worker(
+      'email',
+      async (job) => {
       const { to, subject, html, type } = job.data;
       console.log(`📧 Processing ${type} email to ${to}: "${subject}"`);
 
@@ -57,7 +62,7 @@ function startEmailWorker() {
       }
     },
     {
-      connection: redis.duplicate(),
+      connection: redis.duplicate({ maxRetriesPerRequest: null }),
       concurrency: 3,
       limiter: {
         max: 10,
@@ -76,6 +81,10 @@ function startEmailWorker() {
 
   console.log('📬 BullMQ: Email worker started');
   return worker;
+  } catch (err) {
+    console.warn('⚠️ BullMQ Email worker failed to start:', err.message);
+    return null;
+  }
 }
 
 // ─── Payout Worker ───────────────────────────────────────────
@@ -86,48 +95,53 @@ function startPayoutWorker() {
     return null;
   }
 
-  const worker = new Worker(
-    'payout',
-    async (job) => {
-      const { orderId, vendorId, amount } = job.data;
-      console.log(`💰 Processing payout for order ${orderId}: ${amount} ETB to vendor ${vendorId}`);
+  try {
+    const worker = new Worker(
+      'payout',
+      async (job) => {
+        const { orderId, vendorId, amount } = job.data;
+        console.log(`💰 Processing payout for order ${orderId}: ${amount} ETB to vendor ${vendorId}`);
 
-      // In production, this would call a payout API or update a vendor balance ledger
-      const prisma = require('../lib/prisma');
+        // In production, this would call a payout API or update a vendor balance ledger
+        const prisma = require('../lib/prisma');
 
-      await prisma.payoutRecord.create({
-        data: {
-          orderId,
-          vendorId,
-          amount,
-          status: 'COMPLETED',
-          processedAt: new Date(),
-        },
-      });
+        await prisma.payoutRecord.create({
+          data: {
+            orderId,
+            vendorId,
+            amount,
+            status: 'COMPLETED',
+            processedAt: new Date(),
+          },
+        });
 
-      console.log(`✅ Payout recorded for order ${orderId}`);
-    },
-    {
-      connection: redis.duplicate(),
-      concurrency: 2,
-      attempts: 5,
-      backoff: {
-        type: 'exponential',
-        delay: 2000,
+        console.log(`✅ Payout recorded for order ${orderId}`);
       },
-    }
-  );
+      {
+        connection: redis.duplicate({ maxRetriesPerRequest: null }),
+        concurrency: 2,
+        attempts: 5,
+        backoff: {
+          type: 'exponential',
+          delay: 2000,
+        },
+      }
+    );
 
-  worker.on('completed', (job) => {
-    console.log(`✅ Payout job ${job.id} completed`);
-  });
+    worker.on('completed', (job) => {
+      console.log(`✅ Payout job ${job.id} completed`);
+    });
 
-  worker.on('failed', (job, err) => {
-    console.error(`❌ Payout job ${job?.id} failed (moving to DLQ):`, err.message);
-  });
+    worker.on('failed', (job, err) => {
+      console.error(`❌ Payout job ${job?.id} failed (moving to DLQ):`, err.message);
+    });
 
-  console.log('💰 BullMQ: Payout worker started');
-  return worker;
+    console.log('💰 BullMQ: Payout worker started');
+    return worker;
+  } catch (err) {
+    console.warn('⚠️ BullMQ Payout worker failed to start:', err.message);
+    return null;
+  }
 }
 
 // ─── Queue Helpers ───────────────────────────────────────────

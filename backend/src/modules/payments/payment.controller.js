@@ -113,9 +113,9 @@ exports.verifyPayment = async (req, res, next) => {
     ]);
 
     // Broadcast real-time Socket.io event
-    const io = req.app.get('io');
+    const io = req.app.get('io') || req.io;
     if (io) {
-      io.to(`order_${payment.orderId}`).emit('order:paid', {
+      io.to(`order:${payment.orderId}`).to(`order_${payment.orderId}`).emit('order:paid', {
         orderId: payment.orderId,
         paymentId: updatedPayment.id,
         status: 'PAID',

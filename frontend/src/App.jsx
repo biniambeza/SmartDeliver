@@ -11,6 +11,7 @@ import ChapaPaymentModal from './components/ChapaPaymentModal';
 import OrderTrackerModal from './components/OrderTrackerModal';
 import VendorDashboardModal from './components/VendorDashboardModal';
 import AdminSuperpanelModal from './components/AdminSuperpanelModal';
+import AiSupportDrawer from './components/AiSupportDrawer';
 import api from './lib/api';
 import {
   CheckCircle2,
@@ -120,6 +121,7 @@ function Dashboard() {
         isOpen={adminModalOpen}
         onClose={() => setAdminModalOpen(false)}
       />
+      <AiSupportDrawer />
 
       {/* HERO SECTION */}
       <div className="w-full bg-white pt-6 sm:pt-10 pb-16 lg:pb-24 border-b border-gray-100 relative overflow-hidden">

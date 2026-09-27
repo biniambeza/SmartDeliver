@@ -121,9 +121,13 @@ exports.createOrder = async (req, res, next) => {
       }
     );
 
-    // 6. Broadcast real-time event via WebSocket if available
-    const io = req.app.get('io');
+    const io = req.app.get('io') || req.io;
     if (io) {
+      io.to(`order:${createdOrder.id}`).to(`order_${createdOrder.id}`).emit('order:created', {
+        orderId: createdOrder.id,
+        totalAmount: createdOrder.totalAmount,
+        status: createdOrder.status,
+      });
       io.to(`vendor_${vendorId}`).emit('order:created', {
         orderId: createdOrder.id,
         totalAmount: createdOrder.totalAmount,
@@ -279,9 +283,9 @@ exports.cancelOrder = async (req, res, next) => {
     });
 
     // Notify via Socket.io if connected
-    const io = req.app.get('io');
+    const io = req.app.get('io') || req.io;
     if (io) {
-      io.to(`order_${id}`).emit('order:status', { orderId: id, status: 'CANCELLED' });
+      io.to(`order:${id}`).to(`order_${id}`).emit('order:status', { orderId: id, status: 'CANCELLED' });
       io.to(`vendor_${order.vendorId}`).emit('order:cancelled', { orderId: id });
     }
 

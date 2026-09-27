@@ -3,6 +3,11 @@ const router = express.Router();
 const deliveryController = require('./delivery.controller');
 const { authenticate } = require('../../middleware/auth.middleware');
 
+// Rider queries
+router.get('/available', authenticate, deliveryController.getAvailableDeliveries);
+router.get('/active', authenticate, deliveryController.getActiveDelivery);
+router.get('/history', authenticate, deliveryController.getRiderHistory);
+
 // Claim order for delivery (Assign courier)
 router.post('/claim/:orderId', authenticate, deliveryController.claimDelivery);
 

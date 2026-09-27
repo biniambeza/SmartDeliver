@@ -6,7 +6,7 @@ const REDIS_URL = process.env.REDIS_URL;
 
 if (REDIS_URL) {
   redis = new Redis(REDIS_URL, {
-    maxRetriesPerRequest: 3,
+    maxRetriesPerRequest: null,
     retryStrategy(times) {
       if (times > 5) {
         console.error('❌ Redis: Max retry attempts reached. Giving up.');

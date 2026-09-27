@@ -263,3 +263,103 @@ exports.getDeliveryByOrderId = async (req, res, next) => {
     next(error);
   }
 };
+
+/**
+ * GET /api/v1/deliveries/available
+ * Fetch orders that are ready for pickup and need a delivery courier
+ */
+exports.getAvailableDeliveries = async (req, res, next) => {
+  try {
+    const orders = await prisma.order.findMany({
+      where: {
+        status: { in: ['PAID', 'PREPARING', 'READY_FOR_PICKUP'] },
+        OR: [
+          { delivery: null },
+          { delivery: { riderId: null } },
+        ],
+      },
+      include: {
+        vendor: {
+          select: { name: true, address: true, category: true },
+        },
+        items: {
+          include: {
+            product: { select: { name: true, price: true } },
+          },
+        },
+        customer: {
+          select: { name: true, phone: true },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+      take: 20,
+    });
+
+    res.status(200).json({ success: true, orders });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * GET /api/v1/deliveries/active
+ * Get current active delivery assigned to the logged-in rider
+ */
+exports.getActiveDelivery = async (req, res, next) => {
+  try {
+    const riderId = req.user.id;
+    const delivery = await prisma.delivery.findFirst({
+      where: {
+        riderId,
+        status: { in: ['ASSIGNED', 'PICKED_UP'] },
+      },
+      include: {
+        order: {
+          include: {
+            vendor: { select: { name: true, address: true } },
+            customer: { select: { name: true, phone: true } },
+            items: {
+              include: { product: { select: { name: true, price: true } } },
+            },
+          },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    res.status(200).json({ success: true, delivery: delivery || null });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * GET /api/v1/deliveries/history
+ * Get completed deliveries for the logged-in rider
+ */
+exports.getRiderHistory = async (req, res, next) => {
+  try {
+    const riderId = req.user.id;
+    const deliveries = await prisma.delivery.findMany({
+      where: {
+        riderId,
+        status: 'DELIVERED',
+      },
+      include: {
+        order: {
+          include: {
+            vendor: { select: { name: true } },
+            customer: { select: { name: true } },
+          },
+        },
+      },
+      orderBy: { deliveredAt: 'desc' },
+      take: 50,
+    });
+
+    res.status(200).json({ success: true, deliveries });
+  } catch (error) {
+    next(error);
+  }
+};
+
