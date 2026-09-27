@@ -1,4 +1,5 @@
 const prisma = require('../../lib/prisma');
+const { cacheGet, cacheSet, cacheInvalidatePattern } = require('../../lib/redis');
 
 /**
  * GET /api/v1/vendors
@@ -7,6 +8,13 @@ const prisma = require('../../lib/prisma');
 exports.getVendors = async (req, res, next) => {
   try {
     const { category, search } = req.query;
+
+    // Try cache for unfiltered requests
+    const cacheKey = `vendors:list:${category || 'ALL'}:${search || ''}`;
+    const cached = await cacheGet(cacheKey);
+    if (cached) {
+      return res.status(200).json(cached);
+    }
 
     const where = {
       isActive: true,
@@ -52,11 +60,16 @@ exports.getVendors = async (req, res, next) => {
       createdAt: v.createdAt,
     }));
 
-    res.status(200).json({
+    const response = {
       success: true,
       count: formattedVendors.length,
       vendors: formattedVendors,
-    });
+    };
+
+    // Cache for 60 seconds
+    await cacheSet(cacheKey, response, 60);
+
+    res.status(200).json(response);
   } catch (error) {
     next(error);
   }
@@ -107,6 +120,13 @@ exports.getVendorProducts = async (req, res, next) => {
     const { id } = req.params;
     const { category, search } = req.query;
 
+    // Try cache for unfiltered product listings
+    const cacheKey = `vendors:${id}:products:${category || ''}:${search || ''}`;
+    const cached = await cacheGet(cacheKey);
+    if (cached) {
+      return res.status(200).json(cached);
+    }
+
     const vendor = await prisma.vendor.findUnique({
       where: { id },
     });
@@ -138,12 +158,17 @@ exports.getVendorProducts = async (req, res, next) => {
       orderBy: { createdAt: 'asc' },
     });
 
-    res.status(200).json({
+    const response = {
       success: true,
       vendorId: id,
       count: products.length,
       products,
-    });
+    };
+
+    // Cache for 60 seconds
+    await cacheSet(cacheKey, response, 60);
+
+    res.status(200).json(response);
   } catch (error) {
     next(error);
   }
@@ -320,6 +345,10 @@ exports.toggleProductAvailability = async (req, res, next) => {
       });
     }
 
+    // Invalidate product cache
+    await cacheInvalidatePattern(`vendors:${product.vendorId}:products:*`);
+    await cacheInvalidatePattern('vendors:list:*');
+
     res.status(200).json({
       success: true,
       message: `Product "${updated.name}" availability set to ${updated.isAvailable ? 'IN STOCK' : 'OUT OF STOCK'}`,
@@ -348,6 +377,12 @@ exports.updateProduct = async (req, res, next) => {
       where: { id },
       data,
     });
+
+    // Invalidate product cache
+    const product = await prisma.product.findUnique({ where: { id }, select: { vendorId: true } });
+    if (product) {
+      await cacheInvalidatePattern(`vendors:${product.vendorId}:products:*`);
+    }
 
     res.status(200).json({
       success: true,
@@ -431,6 +466,10 @@ exports.createProduct = async (req, res, next) => {
         imageUrl,
       }
     });
+
+    // Invalidate product cache for this vendor
+    await cacheInvalidatePattern(`vendors:${vendor.id}:products:*`);
+    await cacheInvalidatePattern('vendors:list:*');
 
     res.status(201).json({ success: true, product });
   } catch (error) {

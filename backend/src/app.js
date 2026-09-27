@@ -54,6 +54,7 @@ app.use((req, res, next) => {
 });
 
 const prisma = require('./lib/prisma');
+const { redis } = require('./lib/redis');
 
 // Health Checks (accessible at /health and /api/v1/health)
 const handleHealth = (req, res) => {
@@ -87,8 +88,46 @@ const handleDbHealth = async (req, res) => {
   }
 };
 
+// Liveness Probe — is the process running?
+const handleLive = (req, res) => {
+  res.status(200).json({ status: 'alive', timestamp: new Date().toISOString() });
+};
+
+// Readiness Probe — are dependencies reachable?
+const handleReady = async (req, res) => {
+  const checks = { database: 'DOWN', redis: 'DOWN' };
+  let healthy = true;
+
+  try {
+    await prisma.$queryRaw`SELECT 1`;
+    checks.database = 'UP';
+  } catch {
+    healthy = false;
+  }
+
+  try {
+    if (redis) {
+      await redis.ping();
+      checks.redis = 'UP';
+    } else {
+      checks.redis = 'NOT_CONFIGURED';
+    }
+  } catch {
+    healthy = false;
+  }
+
+  const statusCode = healthy ? 200 : 503;
+  res.status(statusCode).json({
+    status: healthy ? 'ready' : 'not_ready',
+    services: checks,
+    timestamp: new Date().toISOString(),
+  });
+};
+
 app.get(['/health', '/api/v1/health'], handleHealth);
 app.get(['/health/db', '/api/v1/health/db'], handleDbHealth);
+app.get(['/health/live', '/api/v1/health/live'], handleLive);
+app.get(['/health/ready', '/api/v1/health/ready'], handleReady);
 
 // Base API route
 app.get('/api/v1', (req, res) => {
@@ -107,14 +146,19 @@ const paymentRoutes = require('./modules/payments/payment.routes');
 const deliveryRoutes = require('./modules/deliveries/delivery.routes');
 const adminRoutes = require('./modules/admin/admin.routes');
 const customerRoutes = require('./modules/customer/customer.routes');
+const aiRoutes = require('./modules/ai/ai.routes');
 
-app.use('/api/v1/auth', authRoutes);
+// Rate limiter imports
+const { authLimiter, paymentLimiter } = require('./middleware/rateLimiter');
+
+app.use('/api/v1/auth', authLimiter, authRoutes);
 app.use('/api/v1/vendors', vendorRoutes);
 app.use('/api/v1/orders', orderRoutes);
-app.use('/api/v1/payments', paymentRoutes);
+app.use('/api/v1/payments', paymentLimiter, paymentRoutes);
 app.use('/api/v1/deliveries', deliveryRoutes);
 app.use('/api/v1/admin', adminRoutes);
 app.use('/api/v1/customer', customerRoutes);
+app.use('/api/v1/ai', aiRoutes);
 
 
 // 404 Handler
@@ -133,6 +177,11 @@ app.use((err, req, res, next) => {
   });
 });
 
+// Start BullMQ Workers (if Redis is available)
+const { startEmailWorker, startPayoutWorker } = require('./jobs/workers');
+startEmailWorker();
+startPayoutWorker();
+
 // Start Server
 server.listen(PORT, () => {
   console.log(`🚀 SmartDeliver Backend running on http://localhost:${PORT}`);
@@ -141,3 +190,4 @@ server.listen(PORT, () => {
 });
 
 module.exports = { app, server, io };
+
